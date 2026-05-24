@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>献立アキネーター（GitHub版）</title>
+<style>
+body { font-family: sans-serif; text-align: center; padding: 20px; }
+#question { font-size: 24px; margin: 40px 0; min-height: 80px; }
+.btn { padding: 12px 25px; margin: 10px; font-size: 18px; cursor: pointer; }
+#bar { width: 80%; height: 20px; background: #ddd; margin: 20px auto; border-radius: 10px; overflow: hidden; }
+#bar-inner { height: 100%; width: 0%; background: #66c; transition: 0.3s; }
+.result-card { border: 1px solid #ccc; padding: 15px; margin: 15px auto; width: 70%; border-radius: 8px; }
+</style>
+</head>
+<body>
+
+<h1>献立アキネーター</h1>
+
+<div id="question"></div>
+
+<div id="buttons">
+  <button class="btn" onclick="answer(2)">はい</button>
+  <button class="btn" onclick="answer(1)">ややそう</button>
+  <button class="btn" onclick="answer(0)">どちらでもない</button>
+  <button class="btn" onclick="answer(-1)">あまりそうでない</button>
+  <button class="btn" onclick="answer(-2)">いいえ</button>
+</div>
+
+<div id="bar"><div id="bar-inner"></div></div>
+
+<div id="result"></div>
+
+<script>
+// ===============================
+// 質問セット（食べたい気分？）
+// ===============================
+let questions = [
+  { text: "肉料理を食べたい気分？", key: "Q_肉" },
+  { text: "魚料理を食べたい気分？", key: "Q_魚" },
+  { text: "卵を使った料理を食べたい気分？", key: "Q_卵" },
+  { text: "野菜多めの料理を食べたい気分？", key: "Q_野菜" },
+  { text: "海老を使った料理を食べたい気分？", key: "Q_海老" },
+
+  { text: "ご飯ものを食べたい気分？", key: "Q_米", branch: "rice" },
+  { text: "麺類を食べたい気分？", key: "Q_麺", branch: "noodle" },
+  { text: "パン系の料理を食べたい気分？", key: "Q_パン", branch: "bread" },
+
+  { text: "揚げ物を食べたい気分？", key: "Q_揚げる" },
+  { text: "焼き料理を食べたい気分？", key: "Q_焼く" },
+  { text: "煮込み料理を食べたい気分？", key: "Q_煮る" },
+  { text: "炒め物を食べたい気分？", key: "Q_炒める" },
+  { text: "和え物を食べたい気分？", key: "Q_和える" },
+
+  { text: "こってりした料理を食べたい気分？", key: "Q_こってり" },
+  { text: "あっさりした料理を食べたい気分？", key: "Q_あっさり" },
+  { text: "塩味の料理を食べたい気分？", key: "Q_塩味" },
+  { text: "クリーミーな料理を食べたい気分？", key: "Q_クリーミー" },
+  { text: "スパイシーな料理を食べたい気分？", key: "Q_スパイシー" },
+
+  { text: "10分以内で作れる料理がいい？", key: "Q_超短時間" },
+  { text: "夜食向けの軽い料理がいい？", key: "Q_夜食" },
+
+  { text: "予算は安いほうがいい？", key: "低予算" },
+  { text: "中くらいの予算でもOK？", key: "中予算" },
+  { text: "高めの料理でもOK？", key: "高予算" },
+  { text: "朝食向けの料理がいい？", key: "朝食" },
+  { text: "夕食向けの料理がいい？", key: "夕食" }
+];
+
+let db = [];
+let index = 0;
+let answers = [];
+
+// ===============================
+// JSON 読み込み（GitHub Pages なら100%動く）
+// ===============================
+fetch("menu_fixed2.json")
+  .then(res => res.json())
+  .then(data => {
+    db = data;
+    showQuestion();
+  })
+  .catch(err => {
+    document.getElementById("question").innerText = "JSON の読み込みに失敗しました";
+    console.error(err);
+  });
+
+function showQuestion() {
+  document.getElementById("question").innerText = questions[index].text;
+  document.getElementById("bar-inner").style.width = (index / questions.length) * 100 + "%";
+}
+
+function answer(value) {
+  const q = questions[index];
+  answers.push({ key: q.key, value });
+
+  // 主食の分岐
+  if (q.branch === "rice" && value > 0) {
+    questions = questions.filter(q => q.branch !== "noodle" && q.branch !== "bread");
+  }
+  if (q.branch === "noodle" && value > 0) {
+    questions = questions.filter(q => q.branch !== "bread");
+  }
+
+  index++;
+
+  // 途中終了（差が4以上）
+  if (index >= 5) {
+    const top = calcScores().slice(0, 2);
+    if (top.length >= 2 && Math.abs(top[0].score - top[1].score) >= 4) {
+      finish();
+      return;
+    }
+  }
+
+  if (index >= questions.length) {
+    finish();
+  } else {
+    showQuestion();
+  }
+}
+
+function calcScores() {
+  db.forEach(item => {
+    item.score = 0;
+    answers.forEach(a => {
+      if (item[a.key] === true) item.score += a.value;
+    });
+  });
+  return db.sort((a, b) => b.score - a.score);
+}
+
+function finish() {
+  document.getElementById("buttons").style.display = "none";
+  document.getElementById("question").innerText = "あなたに合いそうな献立はこちら！";
+
+  const top3 = calcScores().slice(0, 3);
+
+  let html = "";
+  top3.forEach(item => {
+    html += `
+      <div class="result-card">
+        <h3>${item["メニュー名"]}</h3>
+        <p>スコア：${Math.round(item.score)}</p>
+        <a href="${item["Cookpadリンク"]}" target="_blank">レシピを見る</a>
+      </div>
+    `;
+  });
+
+  document.getElementById("result").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
+
