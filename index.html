@@ -2,14 +2,79 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>献立アキネーター</title>
+
 <style>
-body { font-family: sans-serif; text-align: center; padding: 20px; }
-#question { font-size: 24px; margin: 40px 0; min-height: 80px; }
-.btn { padding: 12px 25px; margin: 10px; font-size: 18px; cursor: pointer; }
-#bar { width: 80%; height: 20px; background: #ddd; margin: 20px auto; border-radius: 10px; overflow: hidden; }
-#bar-inner { height: 100%; width: 0%; background: #66c; transition: 0.3s; }
-.result-card { border: 1px solid #ccc; padding: 15px; margin: 15px auto; width: 70%; border-radius: 8px; }
+body {
+  font-family: sans-serif;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+}
+
+#question {
+  font-size: 22px;
+  margin: 40px 0;
+  min-height: 80px;
+}
+
+.btn {
+  padding: 14px 25px;
+  margin: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  width: 90%;
+  max-width: 300px;
+  border-radius: 8px;
+}
+
+#buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#bar {
+  width: 90%;
+  height: 18px;
+  background: #ddd;
+  margin: 20px auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#bar-inner {
+  height: 100%;
+  width: 0%;
+  background: #66c;
+  transition: 0.3s;
+}
+
+.result-card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin: 15px auto;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+#restart {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 300px;
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 8px;
+  background: #444;
+  color: white;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -30,41 +95,39 @@ body { font-family: sans-serif; text-align: center; padding: 20px; }
 
 <div id="result"></div>
 
-<button id="restart" class="btn" style="display:none;" onclick="restartGame()">
-  最初からやり直す
-</button>
+<button id="restart" onclick="restartGame()">最初からやり直す</button>
 
 <script>
 // ===============================
-// 質問セット（面白い言い回し版）
+// 質問セット（元の言い回し）
 // ===============================
 let questions = [
-  { text: "今日は朝っぽい軽めの料理、欲してる？", key: "朝食" },
-  { text: "がっつり夕飯系の気分だったりする？", key: "夕食" },
-  { text: "夜中にサクッと食べられるやつ、求めてる？", key: "Q_夜食" },
+  { text: "朝食向けの料理を食べたい気分？", key: "朝食" },
+  { text: "夕食向けの料理を食べたい気分？", key: "夕食" },
+  { text: "夜食向けの軽い料理がいい？", key: "Q_夜食" },
 
-  { text: "白米ドーン系、今の気分に刺さる？", key: "Q_米", branch: "rice" },
-  { text: "麺をズルッといきたい気分？", key: "Q_麺", branch: "noodle" },
-  { text: "パン系の料理、今日はアリ？", key: "Q_パン", branch: "bread" },
+  { text: "ご飯ものを食べたい気分？", key: "Q_米", branch: "rice" },
+  { text: "麺類を食べたい気分？", key: "Q_麺", branch: "noodle" },
+  { text: "パン系の料理を食べたい気分？", key: "Q_パン", branch: "bread" },
 
-  { text: "肉のパワーで満たされたい感じ？", key: "Q_肉" },
-  { text: "魚のさっぱり感、求めてる？", key: "Q_魚" },
-  { text: "卵のふわとろ感、欲しい？", key: "Q_卵" },
-  { text: "野菜多めでヘルシーにいきたい気分？", key: "Q_野菜" },
-  { text: "海老のプリッと感、今日はアリ？", key: "Q_海老" },
+  { text: "肉料理を食べたい気分？", key: "Q_肉" },
+  { text: "魚料理を食べたい気分？", key: "Q_魚" },
+  { text: "卵を使った料理を食べたい気分？", key: "Q_卵" },
+  { text: "野菜多めの料理を食べたい気分？", key: "Q_野菜" },
+  { text: "海老を使った料理を食べたい気分？", key: "Q_海老" },
 
-  { text: "こってり濃厚なやつ、いきたい？", key: "Q_こってり" },
-  { text: "逆に、あっさり軽めがしっくりくる？", key: "Q_あっさり" },
+  { text: "こってりした料理を食べたい気分？", key: "Q_こってり" },
+  { text: "あっさりした料理を食べたい気分？", key: "Q_あっさり" },
 
-  { text: "揚げ物のサクッと感、欲してる？", key: "Q_揚げる" },
-  { text: "焼き料理の香ばしさ、今の気分に合う？", key: "Q_焼く" },
-  { text: "煮込み系のホッとする感じ、求めてる？", key: "Q_煮る" },
-  { text: "炒め物のジャッとした感じ、好き？", key: "Q_炒める" },
-  { text: "和え物のサッと食べられる感じ、どう？", key: "Q_和える" },
+  { text: "揚げ物を食べたい気分？", key: "Q_揚げる" },
+  { text: "焼き料理を食べたい気分？", key: "Q_焼く" },
+  { text: "煮込み料理を食べたい気分？", key: "Q_煮る" },
+  { text: "炒め物を食べたい気分？", key: "Q_炒める" },
+  { text: "和え物を食べたい気分？", key: "Q_和える" },
 
-  { text: "クリーミーなまろやか系、今日は気分？", key: "Q_クリーミー" },
+  { text: "クリーミーな料理を食べたい気分？", key: "Q_クリーミー" },
 
-  { text: "10分以内で作れる超スピード飯がいい？", key: "Q_超短時間" }
+  { text: "10分以内で作れる料理がいい？", key: "Q_超短時間" }
 ];
 
 // リセット用コピー
@@ -159,9 +222,6 @@ function finish() {
   });
 
   document.getElementById("result").innerHTML = html;
-
-  // やり直しボタン表示
-  document.getElementById("restart").style.display = "inline-block";
 }
 
 function restartGame() {
@@ -169,8 +229,7 @@ function restartGame() {
   answers = [];
   questions = JSON.parse(JSON.stringify(originalQuestions));
 
-  document.getElementById("buttons").style.display = "block";
-  document.getElementById("restart").style.display = "none";
+  document.getElementById("buttons").style.display = "flex";
   document.getElementById("result").innerHTML = "";
   document.getElementById("bar-inner").style.width = "0%";
 
