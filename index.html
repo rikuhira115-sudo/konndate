@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>献立アキネーター（GitHub版）</title>
+<title>献立アキネーター</title>
 <style>
 body { font-family: sans-serif; text-align: center; padding: 20px; }
 #question { font-size: 24px; margin: 40px 0; min-height: 80px; }
@@ -30,49 +30,52 @@ body { font-family: sans-serif; text-align: center; padding: 20px; }
 
 <div id="result"></div>
 
+<button id="restart" class="btn" style="display:none;" onclick="restartGame()">
+  最初からやり直す
+</button>
+
 <script>
 // ===============================
-// 質問セット（食べたい気分？）
+// 質問セット（面白い言い回し版）
 // ===============================
 let questions = [
-  { text: "肉料理を食べたい気分？", key: "Q_肉" },
-  { text: "魚料理を食べたい気分？", key: "Q_魚" },
-  { text: "卵を使った料理を食べたい気分？", key: "Q_卵" },
-  { text: "野菜多めの料理を食べたい気分？", key: "Q_野菜" },
-  { text: "海老を使った料理を食べたい気分？", key: "Q_海老" },
+  { text: "今日は朝っぽい軽めの料理、欲してる？", key: "朝食" },
+  { text: "がっつり夕飯系の気分だったりする？", key: "夕食" },
+  { text: "夜中にサクッと食べられるやつ、求めてる？", key: "Q_夜食" },
 
-  { text: "ご飯ものを食べたい気分？", key: "Q_米", branch: "rice" },
-  { text: "麺類を食べたい気分？", key: "Q_麺", branch: "noodle" },
-  { text: "パン系の料理を食べたい気分？", key: "Q_パン", branch: "bread" },
+  { text: "白米ドーン系、今の気分に刺さる？", key: "Q_米", branch: "rice" },
+  { text: "麺をズルッといきたい気分？", key: "Q_麺", branch: "noodle" },
+  { text: "パン系の料理、今日はアリ？", key: "Q_パン", branch: "bread" },
 
-  { text: "揚げ物を食べたい気分？", key: "Q_揚げる" },
-  { text: "焼き料理を食べたい気分？", key: "Q_焼く" },
-  { text: "煮込み料理を食べたい気分？", key: "Q_煮る" },
-  { text: "炒め物を食べたい気分？", key: "Q_炒める" },
-  { text: "和え物を食べたい気分？", key: "Q_和える" },
+  { text: "肉のパワーで満たされたい感じ？", key: "Q_肉" },
+  { text: "魚のさっぱり感、求めてる？", key: "Q_魚" },
+  { text: "卵のふわとろ感、欲しい？", key: "Q_卵" },
+  { text: "野菜多めでヘルシーにいきたい気分？", key: "Q_野菜" },
+  { text: "海老のプリッと感、今日はアリ？", key: "Q_海老" },
 
-  { text: "こってりした料理を食べたい気分？", key: "Q_こってり" },
-  { text: "あっさりした料理を食べたい気分？", key: "Q_あっさり" },
-  { text: "塩味の料理を食べたい気分？", key: "Q_塩味" },
-  { text: "クリーミーな料理を食べたい気分？", key: "Q_クリーミー" },
-  { text: "スパイシーな料理を食べたい気分？", key: "Q_スパイシー" },
+  { text: "こってり濃厚なやつ、いきたい？", key: "Q_こってり" },
+  { text: "逆に、あっさり軽めがしっくりくる？", key: "Q_あっさり" },
 
-  { text: "10分以内で作れる料理がいい？", key: "Q_超短時間" },
-  { text: "夜食向けの軽い料理がいい？", key: "Q_夜食" },
+  { text: "揚げ物のサクッと感、欲してる？", key: "Q_揚げる" },
+  { text: "焼き料理の香ばしさ、今の気分に合う？", key: "Q_焼く" },
+  { text: "煮込み系のホッとする感じ、求めてる？", key: "Q_煮る" },
+  { text: "炒め物のジャッとした感じ、好き？", key: "Q_炒める" },
+  { text: "和え物のサッと食べられる感じ、どう？", key: "Q_和える" },
 
-  { text: "予算は安いほうがいい？", key: "低予算" },
-  { text: "中くらいの予算でもOK？", key: "中予算" },
-  { text: "高めの料理でもOK？", key: "高予算" },
-  { text: "朝食向けの料理がいい？", key: "朝食" },
-  { text: "夕食向けの料理がいい？", key: "夕食" }
+  { text: "クリーミーなまろやか系、今日は気分？", key: "Q_クリーミー" },
+
+  { text: "10分以内で作れる超スピード飯がいい？", key: "Q_超短時間" }
 ];
+
+// リセット用コピー
+const originalQuestions = JSON.parse(JSON.stringify(questions));
 
 let db = [];
 let index = 0;
 let answers = [];
 
 // ===============================
-// JSON 読み込み（GitHub Pages なら100%動く）
+// JSON 読み込み（GitHub Pages で動く）
 // ===============================
 fetch("menu_fixed2.json")
   .then(res => res.json())
@@ -100,6 +103,14 @@ function answer(value) {
   }
   if (q.branch === "noodle" && value > 0) {
     questions = questions.filter(q => q.branch !== "bread");
+  }
+
+  // こってり・あっさりの相互スキップ
+  if (q.key === "Q_こってり" && value >= 1) {
+    questions = questions.filter(qq => qq.key !== "Q_あっさり");
+  }
+  if (q.key === "Q_あっさり" && value >= 1) {
+    questions = questions.filter(qq => qq.key !== "Q_こってり");
   }
 
   index++;
@@ -148,9 +159,24 @@ function finish() {
   });
 
   document.getElementById("result").innerHTML = html;
+
+  // やり直しボタン表示
+  document.getElementById("restart").style.display = "inline-block";
+}
+
+function restartGame() {
+  index = 0;
+  answers = [];
+  questions = JSON.parse(JSON.stringify(originalQuestions));
+
+  document.getElementById("buttons").style.display = "block";
+  document.getElementById("restart").style.display = "none";
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("bar-inner").style.width = "0%";
+
+  showQuestion();
 }
 </script>
 
 </body>
 </html>
-
