@@ -7,15 +7,30 @@
 
 <style>
 body {
-  font-family: sans-serif;
+  font-family: "Hiragino Sans", "Rounded Mplus 1c", sans-serif;
+  background: #FFF8F0;
   text-align: center;
   padding: 20px;
   margin: 0;
+  color: #444;
+}
+
+h1 {
+  color: #FF8FA3;
+  margin-bottom: 10px;
+}
+
+.fav-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: #FF8FA3;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 #question {
   font-size: 22px;
-  margin: 40px 0;
+  margin: 30px 0;
   min-height: 80px;
 }
 
@@ -26,7 +41,11 @@ body {
   cursor: pointer;
   width: 90%;
   max-width: 300px;
-  border-radius: 8px;
+  border-radius: 25px;
+  border: none;
+  background: #FFB6C1;
+  color: white;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
 #buttons {
@@ -38,7 +57,7 @@ body {
 #bar {
   width: 90%;
   height: 18px;
-  background: #ddd;
+  background: #F2DCDC;
   margin: 20px auto;
   border-radius: 10px;
   overflow: hidden;
@@ -47,18 +66,37 @@ body {
 #bar-inner {
   height: 100%;
   width: 0%;
-  background: #66c;
+  background: #A7C7E7;
   transition: 0.3s;
 }
 
 .result-card {
-  border: 1px solid #ccc;
-  padding: 15px;
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
   margin: 15px auto;
   width: 90%;
   max-width: 400px;
-  border-radius: 8px;
-  background: #fafafa;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.result-card h3 {
+  margin-top: 0;
+  color: #FF8FA3;
+}
+
+.save-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #FF8FA3;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+#result {
+  padding-bottom: 160px;
 }
 
 #restart {
@@ -70,16 +108,20 @@ body {
   max-width: 300px;
   padding: 14px;
   font-size: 18px;
-  border-radius: 8px;
-  background: #444;
+  border-radius: 25px;
+  background: #FF8FA3;
   color: white;
   cursor: pointer;
+  border: none;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
 }
 </style>
 </head>
 <body>
 
 <h1>献立アキネーター</h1>
+
+<a href="favorites.html" class="fav-link">お気に入りを見る</a>
 
 <div id="question"></div>
 
@@ -102,37 +144,30 @@ body {
 // 質問セット（フィルター＋スコア）
 // ===============================
 let questions = [
-  // 時間帯（フィルター）
   { text: "朝食向けの料理がいい？", key: "朝食", filter: "scene", sceneOrder: 1 },
   { text: "昼食向けの料理がいい？", key: "昼食", filter: "scene", sceneOrder: 2 },
   { text: "夕食向けの料理がいい？", key: "夕食", filter: "scene", sceneOrder: 3 },
   { text: "夜食向けの軽い料理がいい？", key: "Q_夜食", filter: "scene", sceneOrder: 4 },
 
-  // 主食（フィルター）
   { text: "ご飯ものが食べたい？", key: "Q_米", branch: "rice", filter: "main" },
   { text: "麺類が食べたい？", key: "Q_麺", branch: "noodle", filter: "main" },
   { text: "パン系の料理が食べたい？", key: "Q_パン", branch: "bread", filter: "main" },
 
-  // 時間（フィルター）
   { text: "15分以内で作れる料理がいい？", key: "Q_超短時間", filter: "time" },
 
-  // 予算（フィルター）
   { text: "ちょっと高めの料理でもOK？", key: "高予算", filter: "budget" },
 
-  // メイン食材（スコア）
   { text: "肉料理が食べたい？", key: "Q_肉" },
   { text: "魚料理が食べたい？", key: "Q_魚" },
   { text: "卵を使った料理が食べたい？", key: "Q_卵" },
   { text: "野菜多めの料理がいい？", key: "Q_野菜" },
 
-  // 味（スコア）
   { text: "こってりした料理が食べたい？", key: "Q_こってり" },
   { text: "あっさりした料理が食べたい？", key: "Q_あっさり" },
   { text: "塩味の料理が好き？", key: "Q_塩味" },
   { text: "クリーミーな料理が好き？", key: "Q_クリーミー" },
   { text: "スパイシーな料理が好き？", key: "Q_スパイシー" },
 
-  // 調理法（スコア）
   { text: "揚げ物が食べたい？", key: "Q_揚げる" },
   { text: "焼き料理が食べたい？", key: "Q_焼く" },
   { text: "煮込み料理が食べたい？", key: "Q_煮る" },
@@ -140,7 +175,6 @@ let questions = [
   { text: "和え物が食べたい？", key: "Q_和える" }
 ];
 
-// リセット用コピー
 const originalQuestions = JSON.parse(JSON.stringify(questions));
 
 let db = [];
@@ -168,9 +202,6 @@ function answer(value) {
   const q = questions[index];
   answers.push({ key: q.key, value });
 
-  // ===============================
-  // フィルター処理
-  // ===============================
   if (q.filter === "scene" && value > 0) {
     questions = questions.filter(qq => qq.filter !== "scene" || qq.sceneOrder <= q.sceneOrder);
     filteredDB = filteredDB.filter(item => item[q.key] === true);
@@ -208,11 +239,32 @@ function calcScores(data) {
   return data.sort((a, b) => b.score - a.score);
 }
 
+function saveMenu(name) {
+  let saved = JSON.parse(localStorage.getItem("savedMenus") || "[]");
+  if (!saved.includes(name)) {
+    saved.push(name);
+    localStorage.setItem("savedMenus", JSON.stringify(saved));
+  }
+  alert("お気に入りに追加したよ！");
+}
+
 function finish() {
   document.getElementById("buttons").style.display = "none";
   document.getElementById("question").innerText = "あなたに合いそうな献立はこちら！";
 
-  let result = filteredDB.length > 0 ? filteredDB : db;
+  let result = filteredDB.length > 0 ? filteredDB : [];
+
+  if (result.length === 0) {
+    document.getElementById("result").innerHTML = `
+      <div class="result-card">
+        <h3>ごめんね…</h3>
+        <p>条件に合う献立が見つからなかったよ💦</p>
+        <p>質問を少し変えてもう一度試してみてね！</p>
+      </div>
+    `;
+    return;
+  }
+
   const top3 = calcScores(result).slice(0, 3);
 
   let html = "";
@@ -220,8 +272,8 @@ function finish() {
     html += `
       <div class="result-card">
         <h3>${item["メニュー名"]}</h3>
-        <p>スコア：${Math.round(item.score)}</p>
-        <a href="${item["Cookpadリンク"]}" target="_blank">レシピを見る</a>
+        <a href="${item["Cookpadリンク"]}" target="_blank">レシピを見る</a><br>
+        <button class="save-btn" onclick="saveMenu('${item["メニュー名"]}')">お気に入りに追加</button>
       </div>
     `;
   });
