@@ -175,10 +175,10 @@ let questions = [
   { text: "味の濃さは普通がいい？", key: "味の傾向", value: "普通", branchGroup: "rich", filterType: "exact" },
 
   // --- 材料分類（細分化） ---
-  { text: "牛肉料理がいい？", key: "主な材料", value: ["牛肉"], filterType: "includesAny" },
-  { text: "豚肉料理がいい？", key: "主な材料", value: ["豚肉"], filterType: "includesAny" },
-  { text: "鶏肉料理がいい？", key: "主な材料", value: ["鶏肉"], filterType: "includesAny" },
-  { text: "ひき肉料理がいい？", key: "主な材料", value: ["ひき肉","合いびき肉"], filterType: "includesAny" },
+  { text: "牛肉料理がいい？", key: "主な材料", value: ["牛肉"], filterType: "includesAny", branchGroup: "meat" },
+  { text: "豚肉料理がいい？", key: "主な材料", value: ["豚肉"], filterType: "includesAny", branchGroup: "meat" },
+  { text: "鶏肉料理がいい？", key: "主な材料", value: ["鶏肉"], filterType: "includesAny", branchGroup: "meat" },
+  { text: "ひき肉料理がいい？", key: "主な材料", value: ["ひき肉","合いびき肉"], filterType: "includesAny", branchGroup: "meat" },
 
   { text: "魚料理がいい？", key: "主な材料", value: ["鮭","白身魚","青魚","イカ","タコ","海老"], filterType: "includesAny" },
   { text: "卵料理がいい？", key: "主な材料", value: ["卵"], filterType: "includesAny" },
@@ -206,15 +206,15 @@ let questions = [
   // --- 調理時間 ---
   { text: "15分以内で作れる料理がいい？", key: "調理時間(分)", value: 15, type: "time" },
 
-  // --- 予算 ---
-  { text: "安めの料理がいい？", key: "予算帯", value: "低", filterType: "exact" },
-  { text: "普通の予算でいい？", key: "予算帯", value: "中", filterType: "exact" },
-  { text: "高めの料理でもいい？", key: "予算帯", value: "高", filterType: "exact" },
+  // --- 予算（ブランチカット追加） ---
+  { text: "安めの料理がいい？", key: "予算帯", value: "低", filterType: "exact", branchGroup: "budget" },
+  { text: "普通の予算でいい？", key: "予算帯", value: "中", filterType: "exact", branchGroup: "budget" },
+  { text: "高めの料理でもいい？", key: "予算帯", value: "高", filterType: "exact", branchGroup: "budget" },
 
-  // --- ボリューム ---
-  { text: "軽めの料理がいい？", key: "ボリューム", value: "軽い", filterType: "exact" },
-  { text: "普通くらいの量がいい？", key: "ボリューム", value: "普通", filterType: "exact" },
-  { text: "しっかり食べたい？", key: "ボリューム", value: "重い", filterType: "exact" },
+  // --- ボリューム（ブランチカット追加） ---
+  { text: "軽めの料理がいい？", key: "ボリューム", value: "軽い", filterType: "exact", branchGroup: "volume" },
+  { text: "普通くらいの量がいい？", key: "ボリューム", value: "普通", filterType: "exact", branchGroup: "volume" },
+  { text: "しっかり食べたい？", key: "ボリューム", value: "重い", filterType: "exact", branchGroup: "volume" },
 
   // --- 時間帯 ---
   { text: "朝食向けの料理がいい？", key: "時間帯", value: "朝食", type: "array", branchGroup: "time" },
