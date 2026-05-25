@@ -153,26 +153,33 @@ h1 {
 
 <script>
 // ===============================
-// 質問セット（分岐タグ付き）
+// 質問セット（フィルター＋ブランチカット）
 // ===============================
 let questions = [
   // --- ジャンル ---
-  { text: "和食がいい？", key: "ジャンル", value: "和", branchGroup: "genre" },
-  { text: "洋食がいい？", key: "ジャンル", value: "洋", branchGroup: "genre" },
-  { text: "中華がいい？", key: "ジャンル", value: "中", branchGroup: "genre" },
-  { text: "韓国料理がいい？", key: "ジャンル", value: "韓", branchGroup: "genre" },
-  { text: "エスニック料理がいい？", key: "ジャンル", value: "エスニック", branchGroup: "genre" },
+  { text: "和食がいい？", key: "ジャンル", value: "和", branchGroup: "genre", filterType: "exact" },
+  { text: "洋食がいい？", key: "ジャンル", value: "洋", branchGroup: "genre", filterType: "exact" },
+  { text: "中華がいい？", key: "ジャンル", value: "中", branchGroup: "genre", filterType: "exact" },
+  { text: "韓国料理がいい？", key: "ジャンル", value: "韓", branchGroup: "genre", filterType: "exact" },
+  { text: "エスニック料理がいい？", key: "ジャンル", value: "エスニック", branchGroup: "genre", filterType: "exact" },
 
   // --- 主食 ---
-  { text: "ご飯ものがいい？", key: "主食", value: "米", branchGroup: "staple" },
-  { text: "麺類がいい？", key: "主食", value: "麺", branchGroup: "staple" },
-  { text: "パン系がいい？", key: "主食", value: "パン", branchGroup: "staple" },
-  { text: "主食なしの料理がいい？", key: "主食", value: "なし", branchGroup: "staple" },
+  { text: "ご飯ものがいい？", key: "主食", value: "米", branchGroup: "staple", filterType: "exact" },
+  { text: "麺類がいい？", key: "主食", value: "麺", branchGroup: "staple", filterType: "exact" },
+  { text: "パン系がいい？", key: "主食", value: "パン", branchGroup: "staple", filterType: "exact" },
+  { text: "主食なしの料理がいい？", key: "主食", value: "なし", branchGroup: "staple", filterType: "exact" },
 
   // --- 味の傾向 ---
-  { text: "こってりした料理がいい？", key: "味の傾向", value: "こってり", branchGroup: "rich" },
-  { text: "あっさりした料理がいい？", key: "味の傾向", value: "あっさり", branchGroup: "rich" },
-  { text: "味の濃さは普通がいい？", key: "味の傾向", value: "普通", branchGroup: "rich" },
+  { text: "こってりした料理がいい？", key: "味の傾向", value: "こってり", branchGroup: "rich", filterType: "exact" },
+  { text: "あっさりした料理がいい？", key: "味の傾向", value: "あっさり", branchGroup: "rich", filterType: "exact" },
+  { text: "味の濃さは普通がいい？", key: "味の傾向", value: "普通", branchGroup: "rich", filterType: "exact" },
+
+  // --- 材料分類 ---
+  { text: "肉料理がいい？", key: "主な材料", value: ["牛肉","豚肉","鶏肉"], filterType: "includesAny" },
+  { text: "魚料理がいい？", key: "主な材料", value: ["白身魚","青魚","イカタコ","海老"], filterType: "includesAny" },
+  { text: "卵料理がいい？", key: "主な材料", value: ["卵"], filterType: "includesAny" },
+  { text: "野菜多めの料理がいい？", key: "主な材料", value: ["野菜"], filterType: "includesAny" },
+  { text: "豆腐料理がいい？", key: "主な材料", value: ["豆腐"], filterType: "includesAny" },
 
   // --- 味の特徴 ---
   { text: "甘辛い味が好き？", key: "味の特徴", value: "甘辛" },
@@ -181,29 +188,29 @@ let questions = [
   { text: "味噌味が好き？", key: "味の特徴", value: "味噌味" },
   { text: "クリーミーな味が好き？", key: "味の特徴", value: "クリーミー" },
 
-  // --- 辛さ（スパイシーと辛いはどちらか1つ） ---
+  // --- 辛さ（排他的） ---
   { text: "辛い料理が好き？", key: "味の特徴", value: "辛い", branchGroup: "spicy" },
   { text: "スパイシーな料理が好き？", key: "味の特徴", value: "スパイシー", branchGroup: "spicy" },
 
   // --- 季節 ---
-  { text: "春に合う料理がいい？", key: "季節", value: "春", branchGroup: "season" },
-  { text: "夏に合う料理がいい？", key: "季節", value: "夏", branchGroup: "season" },
-  { text: "秋に合う料理がいい？", key: "季節", value: "秋", branchGroup: "season" },
-  { text: "冬に合う料理がいい？", key: "季節", value: "冬", branchGroup: "season" },
-  { text: "季節は気にしない？", key: "季節", value: "オール", branchGroup: "season" },
+  { text: "春に合う料理がいい？", key: "季節", value: "春", branchGroup: "season", filterType: "exact" },
+  { text: "夏に合う料理がいい？", key: "季節", value: "夏", branchGroup: "season", filterType: "exact" },
+  { text: "秋に合う料理がいい？", key: "季節", value: "秋", branchGroup: "season", filterType: "exact" },
+  { text: "冬に合う料理がいい？", key: "季節", value: "冬", branchGroup: "season", filterType: "exact" },
+  { text: "季節は気にしない？", key: "季節", value: "オール", branchGroup: "season", filterType: "exact" },
 
   // --- 調理時間 ---
   { text: "15分以内で作れる料理がいい？", key: "調理時間(分)", value: 15, type: "time" },
 
   // --- 予算 ---
-  { text: "安めの料理がいい？", key: "予算帯", value: "低" },
-  { text: "普通の予算でいい？", key: "予算帯", value: "中" },
-  { text: "高めの料理でもいい？", key: "予算帯", value: "高" },
+  { text: "安めの料理がいい？", key: "予算帯", value: "低", filterType: "exact" },
+  { text: "普通の予算でいい？", key: "予算帯", value: "中", filterType: "exact" },
+  { text: "高めの料理でもいい？", key: "予算帯", value: "高", filterType: "exact" },
 
   // --- ボリューム ---
-  { text: "軽めの料理がいい？", key: "ボリューム", value: "軽い" },
-  { text: "普通くらいの量がいい？", key: "ボリューム", value: "普通" },
-  { text: "しっかり食べたい？", key: "ボリューム", value: "重い" },
+  { text: "軽めの料理がいい？", key: "ボリューム", value: "軽い", filterType: "exact" },
+  { text: "普通くらいの量がいい？", key: "ボリューム", value: "普通", filterType: "exact" },
+  { text: "しっかり食べたい？", key: "ボリューム", value: "重い", filterType: "exact" },
 
   // --- 時間帯 ---
   { text: "朝食向けの料理がいい？", key: "時間帯", value: "朝食", type: "array", branchGroup: "time" },
@@ -215,6 +222,7 @@ let questions = [
 const originalQuestions = JSON.parse(JSON.stringify(questions));
 
 let db = [];
+let filteredDB = [];
 let index = 0;
 let answers = [];
 
@@ -225,6 +233,7 @@ fetch("menu.json")
   .then(res => res.json())
   .then(data => {
     db = data;
+    filteredDB = [...db];
     showQuestion();
   });
 
@@ -244,6 +253,17 @@ function answer(value) {
     );
   }
 
+  // フィルター処理
+  if (value > 0 && q.filterType === "exact") {
+    filteredDB = filteredDB.filter(item => item[q.key] === q.value);
+  }
+
+  if (value > 0 && q.filterType === "includesAny") {
+    filteredDB = filteredDB.filter(item =>
+      item[q.key].some(mat => q.value.includes(mat))
+    );
+  }
+
   answers.push({ q, value });
   index++;
 
@@ -252,7 +272,7 @@ function answer(value) {
 }
 
 function calcScores() {
-  db.forEach(item => {
+  filteredDB.forEach(item => {
     item.score = 0;
 
     answers.forEach(a => {
@@ -267,13 +287,16 @@ function calcScores() {
       else if (q.key === "味の特徴") {
         if (item["味の特徴"].includes(q.value)) item.score += a.value;
       }
+      else if (q.filterType === "includesAny") {
+        if (item[q.key].some(mat => q.value.includes(mat))) item.score += a.value;
+      }
       else {
         if (item[q.key] === q.value) item.score += a.value;
       }
     });
   });
 
-  return db.sort((a, b) => b.score - a.score);
+  return filteredDB.sort((a, b) => b.score - a.score);
 }
 
 function saveMenu(name, link) {
@@ -315,6 +338,7 @@ function finish() {
 function restartGame() {
   index = 0;
   answers = [];
+  filteredDB = [...db];
   questions = JSON.parse(JSON.stringify(originalQuestions));
 
   document.getElementById("buttons").style.display = "flex";
