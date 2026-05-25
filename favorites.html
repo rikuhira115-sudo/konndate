@@ -29,6 +29,11 @@ h1 {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
+.card h3 {
+  margin-top: 0;
+  color: #FF8FA3;
+}
+
 .delete-btn {
   margin-top: 10px;
   padding: 10px 20px;
@@ -81,11 +86,12 @@ function loadList() {
 
   list.innerHTML = "";
 
-  saved.forEach(name => {
+  saved.forEach(item => {
     list.innerHTML += `
       <div class="card">
-        <h3>${name}</h3>
-        <button class="delete-btn" onclick="removeItem('${name}')">削除</button>
+        <h3>${item.name}</h3>
+        <a href="${item.link}" target="_blank">レシピを見る</a><br>
+        <button class="delete-btn" onclick="removeItem('${item.name}')">削除</button>
       </div>
     `;
   });
@@ -93,7 +99,7 @@ function loadList() {
 
 function removeItem(name) {
   let saved = JSON.parse(localStorage.getItem("savedMenus") || "[]");
-  saved = saved.filter(item => item !== name);
+  saved = saved.filter(item => item.name !== name);
   localStorage.setItem("savedMenus", JSON.stringify(saved));
   loadList();
 }
