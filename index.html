@@ -20,12 +20,18 @@ h1 {
   margin-bottom: 10px;
 }
 
-.fav-link {
+/* 見やすいお気に入りボタン */
+.fav-top-btn {
   display: inline-block;
-  margin-bottom: 20px;
-  color: #FF8FA3;
+  background: #FF8FA3;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-size: 16px;
   font-weight: bold;
   text-decoration: none;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
 #question {
@@ -121,7 +127,7 @@ h1 {
 
 <h1>献立アキネーター</h1>
 
-<a href="favorites.html" class="fav-link">お気に入りを見る</a>
+<a href="favorites.html" class="fav-top-btn">❤️ お気に入りを見る</a>
 
 <div id="question"></div>
 
@@ -202,9 +208,10 @@ function answer(value) {
   const q = questions[index];
   answers.push({ key: q.key, value });
 
+  // YES のときだけフィルター適用
   if (q.filter === "scene" && value > 0) {
-    questions = questions.filter(qq => qq.filter !== "scene" || qq.sceneOrder <= q.sceneOrder);
     filteredDB = filteredDB.filter(item => item[q.key] === true);
+    questions = questions.filter(qq => qq.filter !== "scene" || qq.sceneOrder <= q.sceneOrder);
   }
 
   if (q.filter === "main" && value > 0) {
@@ -239,12 +246,14 @@ function calcScores(data) {
   return data.sort((a, b) => b.score - a.score);
 }
 
-function saveMenu(name) {
+function saveMenu(name, link) {
   let saved = JSON.parse(localStorage.getItem("savedMenus") || "[]");
-  if (!saved.includes(name)) {
-    saved.push(name);
+
+  if (!saved.some(item => item.name === name)) {
+    saved.push({ name: name, link: link });
     localStorage.setItem("savedMenus", JSON.stringify(saved));
   }
+
   alert("お気に入りに追加したよ！");
 }
 
@@ -273,7 +282,9 @@ function finish() {
       <div class="result-card">
         <h3>${item["メニュー名"]}</h3>
         <a href="${item["Cookpadリンク"]}" target="_blank">レシピを見る</a><br>
-        <button class="save-btn" onclick="saveMenu('${item["メニュー名"]}')">お気に入りに追加</button>
+        <button class="save-btn" onclick="saveMenu('${item["メニュー名"]}', '${item["Cookpadリンク"]}')">
+          お気に入りに追加
+        </button>
       </div>
     `;
   });
