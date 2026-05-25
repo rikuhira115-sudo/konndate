@@ -99,56 +99,64 @@ body {
 
 <script>
 // ===============================
-// 質問セット（元の言い回し）
+// 質問セット（フィルター＋スコア）
 // ===============================
 let questions = [
-  { text: "朝食向けの料理を食べたい気分？", key: "朝食" },
-  { text: "夕食向けの料理を食べたい気分？", key: "夕食" },
-  { text: "夜食向けの軽い料理がいい？", key: "Q_夜食" },
+  // 時間帯（フィルター）
+  { text: "朝食向けの料理がいい？", key: "朝食", filter: "scene", sceneOrder: 1 },
+  { text: "昼食向けの料理がいい？", key: "昼食", filter: "scene", sceneOrder: 2 },
+  { text: "夕食向けの料理がいい？", key: "夕食", filter: "scene", sceneOrder: 3 },
+  { text: "夜食向けの軽い料理がいい？", key: "Q_夜食", filter: "scene", sceneOrder: 4 },
 
-  { text: "ご飯ものを食べたい気分？", key: "Q_米", branch: "rice" },
-  { text: "麺類を食べたい気分？", key: "Q_麺", branch: "noodle" },
-  { text: "パン系の料理を食べたい気分？", key: "Q_パン", branch: "bread" },
+  // 主食（フィルター）
+  { text: "ご飯ものが食べたい？", key: "Q_米", branch: "rice", filter: "main" },
+  { text: "麺類が食べたい？", key: "Q_麺", branch: "noodle", filter: "main" },
+  { text: "パン系の料理が食べたい？", key: "Q_パン", branch: "bread", filter: "main" },
 
-  { text: "肉料理を食べたい気分？", key: "Q_肉" },
-  { text: "魚料理を食べたい気分？", key: "Q_魚" },
-  { text: "卵を使った料理を食べたい気分？", key: "Q_卵" },
-  { text: "野菜多めの料理を食べたい気分？", key: "Q_野菜" },
-  { text: "海老を使った料理を食べたい気分？", key: "Q_海老" },
+  // 時間（フィルター）
+  { text: "15分以内で作れる料理がいい？", key: "Q_超短時間", filter: "time" },
 
-  { text: "こってりした料理を食べたい気分？", key: "Q_こってり" },
-  { text: "あっさりした料理を食べたい気分？", key: "Q_あっさり" },
+  // 予算（フィルター）
+  { text: "ちょっと高めの料理でもOK？", key: "高予算", filter: "budget" },
 
-  { text: "揚げ物を食べたい気分？", key: "Q_揚げる" },
-  { text: "焼き料理を食べたい気分？", key: "Q_焼く" },
-  { text: "煮込み料理を食べたい気分？", key: "Q_煮る" },
-  { text: "炒め物を食べたい気分？", key: "Q_炒める" },
-  { text: "和え物を食べたい気分？", key: "Q_和える" },
+  // メイン食材（スコア）
+  { text: "肉料理が食べたい？", key: "Q_肉" },
+  { text: "魚料理が食べたい？", key: "Q_魚" },
+  { text: "卵を使った料理が食べたい？", key: "Q_卵" },
+  { text: "野菜多めの料理がいい？", key: "Q_野菜" },
 
-  { text: "クリーミーな料理を食べたい気分？", key: "Q_クリーミー" },
+  // 味（スコア）
+  { text: "こってりした料理が食べたい？", key: "Q_こってり" },
+  { text: "あっさりした料理が食べたい？", key: "Q_あっさり" },
+  { text: "塩味の料理が好き？", key: "Q_塩味" },
+  { text: "クリーミーな料理が好き？", key: "Q_クリーミー" },
+  { text: "スパイシーな料理が好き？", key: "Q_スパイシー" },
 
-  { text: "10分以内で作れる料理がいい？", key: "Q_超短時間" }
+  // 調理法（スコア）
+  { text: "揚げ物が食べたい？", key: "Q_揚げる" },
+  { text: "焼き料理が食べたい？", key: "Q_焼く" },
+  { text: "煮込み料理が食べたい？", key: "Q_煮る" },
+  { text: "炒め物が食べたい？", key: "Q_炒める" },
+  { text: "和え物が食べたい？", key: "Q_和える" }
 ];
 
 // リセット用コピー
 const originalQuestions = JSON.parse(JSON.stringify(questions));
 
 let db = [];
+let filteredDB = [];
 let index = 0;
 let answers = [];
 
 // ===============================
-// JSON 読み込み（GitHub Pages で動く）
+// JSON 読み込み
 // ===============================
 fetch("menu_fixed2.json")
   .then(res => res.json())
   .then(data => {
     db = data;
+    filteredDB = [...db];
     showQuestion();
-  })
-  .catch(err => {
-    document.getElementById("question").innerText = "JSON の読み込みに失敗しました";
-    console.error(err);
   });
 
 function showQuestion() {
@@ -160,32 +168,28 @@ function answer(value) {
   const q = questions[index];
   answers.push({ key: q.key, value });
 
-  // 主食の分岐
-  if (q.branch === "rice" && value > 0) {
-    questions = questions.filter(q => q.branch !== "noodle" && q.branch !== "bread");
-  }
-  if (q.branch === "noodle" && value > 0) {
-    questions = questions.filter(q => q.branch !== "bread");
+  // ===============================
+  // フィルター処理
+  // ===============================
+  if (q.filter === "scene" && value > 0) {
+    questions = questions.filter(qq => qq.filter !== "scene" || qq.sceneOrder <= q.sceneOrder);
+    filteredDB = filteredDB.filter(item => item[q.key] === true);
   }
 
-  // こってり・あっさりの相互スキップ
-  if (q.key === "Q_こってり" && value >= 1) {
-    questions = questions.filter(qq => qq.key !== "Q_あっさり");
+  if (q.filter === "main" && value > 0) {
+    filteredDB = filteredDB.filter(item => item[q.key] === true);
+    questions = questions.filter(qq => qq.filter !== "main" || qq.key === q.key);
   }
-  if (q.key === "Q_あっさり" && value >= 1) {
-    questions = questions.filter(qq => qq.key !== "Q_こってり");
+
+  if (q.filter === "time" && value > 0) {
+    filteredDB = filteredDB.filter(item => item["調理時間(分)"] <= 15);
+  }
+
+  if (q.filter === "budget" && value < 0) {
+    filteredDB = filteredDB.filter(item => item["高予算"] !== true);
   }
 
   index++;
-
-  // 途中終了（差が4以上）
-  if (index >= 5) {
-    const top = calcScores().slice(0, 2);
-    if (top.length >= 2 && Math.abs(top[0].score - top[1].score) >= 4) {
-      finish();
-      return;
-    }
-  }
 
   if (index >= questions.length) {
     finish();
@@ -194,21 +198,22 @@ function answer(value) {
   }
 }
 
-function calcScores() {
-  db.forEach(item => {
+function calcScores(data) {
+  data.forEach(item => {
     item.score = 0;
     answers.forEach(a => {
       if (item[a.key] === true) item.score += a.value;
     });
   });
-  return db.sort((a, b) => b.score - a.score);
+  return data.sort((a, b) => b.score - a.score);
 }
 
 function finish() {
   document.getElementById("buttons").style.display = "none";
   document.getElementById("question").innerText = "あなたに合いそうな献立はこちら！";
 
-  const top3 = calcScores().slice(0, 3);
+  let result = filteredDB.length > 0 ? filteredDB : db;
+  const top3 = calcScores(result).slice(0, 3);
 
   let html = "";
   top3.forEach(item => {
@@ -228,6 +233,7 @@ function restartGame() {
   index = 0;
   answers = [];
   questions = JSON.parse(JSON.stringify(originalQuestions));
+  filteredDB = [...db];
 
   document.getElementById("buttons").style.display = "flex";
   document.getElementById("result").innerHTML = "";
