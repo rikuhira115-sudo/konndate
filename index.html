@@ -174,9 +174,13 @@ let questions = [
   { text: "あっさりした料理がいい？", key: "味の傾向", value: "あっさり", branchGroup: "rich", filterType: "exact" },
   { text: "味の濃さは普通がいい？", key: "味の傾向", value: "普通", branchGroup: "rich", filterType: "exact" },
 
-  // --- 材料分類 ---
-  { text: "肉料理がいい？", key: "主な材料", value: ["牛肉","豚肉","鶏肉"], filterType: "includesAny" },
-  { text: "魚料理がいい？", key: "主な材料", value: ["白身魚","青魚","イカタコ","海老"], filterType: "includesAny" },
+  // --- 材料分類（細分化） ---
+  { text: "牛肉料理がいい？", key: "主な材料", value: ["牛肉"], filterType: "includesAny" },
+  { text: "豚肉料理がいい？", key: "主な材料", value: ["豚肉"], filterType: "includesAny" },
+  { text: "鶏肉料理がいい？", key: "主な材料", value: ["鶏肉"], filterType: "includesAny" },
+  { text: "ひき肉料理がいい？", key: "主な材料", value: ["ひき肉","合いびき肉"], filterType: "includesAny" },
+
+  { text: "魚料理がいい？", key: "主な材料", value: ["鮭","白身魚","青魚","イカ","タコ","海老"], filterType: "includesAny" },
   { text: "卵料理がいい？", key: "主な材料", value: ["卵"], filterType: "includesAny" },
   { text: "野菜多めの料理がいい？", key: "主な材料", value: ["野菜"], filterType: "includesAny" },
   { text: "豆腐料理がいい？", key: "主な材料", value: ["豆腐"], filterType: "includesAny" },
@@ -246,7 +250,7 @@ function showQuestion() {
 function answer(value) {
   const q = questions[index];
 
-  // YES（2 or 1）のときだけブランチカット
+  // YES のときだけブランチカット
   if (value > 0 && q.branchGroup) {
     questions = questions.filter((qq, i) =>
       i <= index || qq.branchGroup !== q.branchGroup
@@ -272,7 +276,10 @@ function answer(value) {
 }
 
 function calcScores() {
-  filteredDB.forEach(item => {
+  // fallback：候補ゼロなら全体から選ぶ
+  const target = filteredDB.length > 0 ? filteredDB : db;
+
+  target.forEach(item => {
     item.score = 0;
 
     answers.forEach(a => {
@@ -296,7 +303,7 @@ function calcScores() {
     });
   });
 
-  return filteredDB.sort((a, b) => b.score - a.score);
+  return target.sort((a, b) => b.score - a.score);
 }
 
 function saveMenu(name, link) {
