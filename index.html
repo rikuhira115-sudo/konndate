@@ -15,13 +15,11 @@ body {
   color: #444;
 }
 
-/* タイトル */
 h1 {
   color: #FF8FA3;
   margin-bottom: 10px;
 }
 
-/* お気に入りボタン */
 .fav-top-btn {
   display: inline-block;
   background: #FF8FA3;
@@ -35,14 +33,12 @@ h1 {
   box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
-/* 質問文 */
 #question {
   font-size: 22px;
   margin: 30px 0;
   min-height: 80px;
 }
 
-/* 回答ボタン */
 .btn {
   padding: 14px 25px;
   margin: 8px;
@@ -63,7 +59,6 @@ h1 {
   align-items: center;
 }
 
-/* 進行ゲージ */
 #bar {
   width: 90%;
   height: 18px;
@@ -71,7 +66,6 @@ h1 {
   margin: 20px auto;
   border-radius: 10px;
   overflow: hidden;
-  position: relative;
 }
 
 #bar-inner {
@@ -81,7 +75,6 @@ h1 {
   transition: width 0.3s ease;
 }
 
-/* 結果カード */
 .result-card {
   background: white;
   border-radius: 15px;
@@ -97,7 +90,6 @@ h1 {
   color: #FF8FA3;
 }
 
-/* お気に入りボタン */
 .save-btn {
   margin-top: 10px;
   padding: 10px 20px;
@@ -108,12 +100,10 @@ h1 {
   cursor: pointer;
 }
 
-/* 結果エリア */
 #result {
-  padding-bottom: 180px; /* restartボタンと被らないように */
+  padding-bottom: 180px;
 }
 
-/* 最初からボタン */
 #restart {
   position: fixed;
   bottom: 15px;
@@ -132,7 +122,6 @@ h1 {
   z-index: 999;
 }
 
-/* スマホ最適化 */
 @media (max-width: 480px) {
   #question { font-size: 20px; }
   .btn { font-size: 16px; padding: 12px; }
@@ -164,39 +153,63 @@ h1 {
 
 <script>
 // ===============================
-// 質問セット（menu.json準拠）
+// 質問セット（分岐タグ付き）
 // ===============================
 let questions = [
-  { text: "和食が食べたい？", key: "ジャンル", value: "和" },
-  { text: "洋食が食べたい？", key: "ジャンル", value: "洋" },
-  { text: "中華が食べたい？", key: "ジャンル", value: "中" },
-  { text: "韓国料理が食べたい？", key: "ジャンル", value: "韓" },
-  { text: "エスニック料理が食べたい？", key: "ジャンル", value: "エスニック" },
+  // --- ジャンル ---
+  { text: "和食がいい？", key: "ジャンル", value: "和", branchGroup: "genre" },
+  { text: "洋食がいい？", key: "ジャンル", value: "洋", branchGroup: "genre" },
+  { text: "中華がいい？", key: "ジャンル", value: "中", branchGroup: "genre" },
+  { text: "韓国料理がいい？", key: "ジャンル", value: "韓", branchGroup: "genre" },
+  { text: "エスニック料理がいい？", key: "ジャンル", value: "エスニック", branchGroup: "genre" },
 
-  { text: "ご飯ものが食べたい？", key: "主食", value: "米" },
-  { text: "麺類が食べたい？", key: "主食", value: "麺" },
-  { text: "パン系が食べたい？", key: "主食", value: "パン" },
+  // --- 主食 ---
+  { text: "ご飯ものがいい？", key: "主食", value: "米", branchGroup: "staple" },
+  { text: "麺類がいい？", key: "主食", value: "麺", branchGroup: "staple" },
+  { text: "パン系がいい？", key: "主食", value: "パン", branchGroup: "staple" },
+  { text: "主食なしの料理がいい？", key: "主食", value: "なし", branchGroup: "staple" },
 
-  { text: "こってりした料理がいい？", key: "味の傾向", value: "こってり" },
-  { text: "あっさりした料理がいい？", key: "味の傾向", value: "あっさり" },
+  // --- 味の傾向 ---
+  { text: "こってりした料理がいい？", key: "味の傾向", value: "こってり", branchGroup: "rich" },
+  { text: "あっさりした料理がいい？", key: "味の傾向", value: "あっさり", branchGroup: "rich" },
+  { text: "味の濃さは普通がいい？", key: "味の傾向", value: "普通", branchGroup: "rich" },
 
-  { text: "辛い料理が好き？", key: "味の特徴", value: "辛い" },
-  { text: "スパイシーな料理が好き？", key: "味の特徴", value: "スパイシー" },
-  { text: "クリーミーな料理が好き？", key: "味の特徴", value: "クリーミー" },
+  // --- 味の特徴 ---
   { text: "甘辛い味が好き？", key: "味の特徴", value: "甘辛" },
+  { text: "醤油味が好き？", key: "味の特徴", value: "醤油味" },
+  { text: "塩味が好き？", key: "味の特徴", value: "塩味" },
+  { text: "味噌味が好き？", key: "味の特徴", value: "味噌味" },
+  { text: "クリーミーな味が好き？", key: "味の特徴", value: "クリーミー" },
 
-  { text: "冬に合う料理がいい？", key: "季節", value: "冬" },
-  { text: "夏に合う料理がいい？", key: "季節", value: "夏" },
+  // --- 辛さ（スパイシーと辛いはどちらか1つ） ---
+  { text: "辛い料理が好き？", key: "味の特徴", value: "辛い", branchGroup: "spicy" },
+  { text: "スパイシーな料理が好き？", key: "味の特徴", value: "スパイシー", branchGroup: "spicy" },
 
+  // --- 季節 ---
+  { text: "春に合う料理がいい？", key: "季節", value: "春", branchGroup: "season" },
+  { text: "夏に合う料理がいい？", key: "季節", value: "夏", branchGroup: "season" },
+  { text: "秋に合う料理がいい？", key: "季節", value: "秋", branchGroup: "season" },
+  { text: "冬に合う料理がいい？", key: "季節", value: "冬", branchGroup: "season" },
+  { text: "季節は気にしない？", key: "季節", value: "オール", branchGroup: "season" },
+
+  // --- 調理時間 ---
   { text: "15分以内で作れる料理がいい？", key: "調理時間(分)", value: 15, type: "time" },
 
+  // --- 予算 ---
   { text: "安めの料理がいい？", key: "予算帯", value: "低" },
-  { text: "がっつり食べたい？", key: "ボリューム", value: "重い" },
+  { text: "普通の予算でいい？", key: "予算帯", value: "中" },
+  { text: "高めの料理でもいい？", key: "予算帯", value: "高" },
 
-  { text: "朝食向けの料理がいい？", key: "時間帯", value: "朝食", type: "array" },
-  { text: "昼食向けの料理がいい？", key: "時間帯", value: "昼食", type: "array" },
-  { text: "夕食向けの料理がいい？", key: "時間帯", value: "夕食", type: "array" },
-  { text: "夜食向けの軽い料理がいい？", key: "時間帯", value: "夜食", type: "array" }
+  // --- ボリューム ---
+  { text: "軽めの料理がいい？", key: "ボリューム", value: "軽い" },
+  { text: "普通くらいの量がいい？", key: "ボリューム", value: "普通" },
+  { text: "しっかり食べたい？", key: "ボリューム", value: "重い" },
+
+  // --- 時間帯 ---
+  { text: "朝食向けの料理がいい？", key: "時間帯", value: "朝食", type: "array", branchGroup: "time" },
+  { text: "昼食向けの料理がいい？", key: "時間帯", value: "昼食", type: "array", branchGroup: "time" },
+  { text: "夕食向けの料理がいい？", key: "時間帯", value: "夕食", type: "array", branchGroup: "time" },
+  { text: "夜食向けの料理がいい？", key: "時間帯", value: "夜食", type: "array", branchGroup: "time" }
 ];
 
 const originalQuestions = JSON.parse(JSON.stringify(questions));
@@ -222,7 +235,16 @@ function showQuestion() {
 }
 
 function answer(value) {
-  answers.push({ q: questions[index], value });
+  const q = questions[index];
+
+  // YES（2 or 1）のときだけブランチカット
+  if (value > 0 && q.branchGroup) {
+    questions = questions.filter((qq, i) =>
+      i <= index || qq.branchGroup !== q.branchGroup
+    );
+  }
+
+  answers.push({ q, value });
   index++;
 
   if (index >= questions.length) finish();
