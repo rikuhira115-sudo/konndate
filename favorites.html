@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お気に入り</title>
+
+<style>
+body {
+  font-family: "Hiragino Sans", "Rounded Mplus 1c", sans-serif;
+  background: #FFF8F0;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+  color: #444;
+}
+
+h1 {
+  color: #FF8FA3;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 15px auto;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.delete-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #FF8FA3;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.clear-btn {
+  margin-top: 20px;
+  padding: 12px 25px;
+  background: #FFB6C1;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 20px;
+  color: #FF8FA3;
+  font-weight: bold;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+
+<h1>お気に入り</h1>
+
+<div id="list"></div>
+
+<button class="clear-btn" onclick="clearAll()">全部削除する</button>
+
+<br>
+<a href="index.html" class="back-link">← アキネーターに戻る</a>
+
+<script>
+function loadList() {
+  let saved = JSON.parse(localStorage.getItem("savedMenus") || "[]");
+  let list = document.getElementById("list");
+
+  if (saved.length === 0) {
+    list.innerHTML = "<p>まだお気に入りがありません。</p>";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  saved.forEach(name => {
+    list.innerHTML += `
+      <div class="card">
+        <h3>${name}</h3>
+        <button class="delete-btn" onclick="removeItem('${name}')">削除</button>
+      </div>
+    `;
+  });
+}
+
+function removeItem(name) {
+  let saved = JSON.parse(localStorage.getItem("savedMenus") || "[]");
+  saved = saved.filter(item => item !== name);
+  localStorage.setItem("savedMenus", JSON.stringify(saved));
+  loadList();
+}
+
+function clearAll() {
+  localStorage.removeItem("savedMenus");
+  loadList();
+}
+
+loadList();
+</script>
+
+</body>
+</html>
