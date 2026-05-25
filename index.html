@@ -15,12 +15,13 @@ body {
   color: #444;
 }
 
+/* タイトル */
 h1 {
   color: #FF8FA3;
   margin-bottom: 10px;
 }
 
-/* 見やすいお気に入りボタン */
+/* お気に入りボタン */
 .fav-top-btn {
   display: inline-block;
   background: #FF8FA3;
@@ -34,12 +35,14 @@ h1 {
   box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
+/* 質問文 */
 #question {
   font-size: 22px;
   margin: 30px 0;
   min-height: 80px;
 }
 
+/* 回答ボタン */
 .btn {
   padding: 14px 25px;
   margin: 8px;
@@ -60,6 +63,7 @@ h1 {
   align-items: center;
 }
 
+/* 進行ゲージ */
 #bar {
   width: 90%;
   height: 18px;
@@ -67,15 +71,17 @@ h1 {
   margin: 20px auto;
   border-radius: 10px;
   overflow: hidden;
+  position: relative;
 }
 
 #bar-inner {
   height: 100%;
   width: 0%;
   background: #A7C7E7;
-  transition: 0.3s;
+  transition: width 0.3s ease;
 }
 
+/* 結果カード */
 .result-card {
   background: white;
   border-radius: 15px;
@@ -91,6 +97,7 @@ h1 {
   color: #FF8FA3;
 }
 
+/* お気に入りボタン */
 .save-btn {
   margin-top: 10px;
   padding: 10px 20px;
@@ -101,10 +108,12 @@ h1 {
   cursor: pointer;
 }
 
+/* 結果エリア */
 #result {
-  padding-bottom: 160px;
+  padding-bottom: 180px; /* restartボタンと被らないように */
 }
 
+/* 最初からボタン */
 #restart {
   position: fixed;
   bottom: 15px;
@@ -120,6 +129,14 @@ h1 {
   cursor: pointer;
   border: none;
   box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  z-index: 999;
+}
+
+/* スマホ最適化 */
+@media (max-width: 480px) {
+  #question { font-size: 20px; }
+  .btn { font-size: 16px; padding: 12px; }
+  #restart { font-size: 16px; padding: 12px; }
 }
 </style>
 </head>
@@ -147,103 +164,94 @@ h1 {
 
 <script>
 // ===============================
-// 質問セット（フィルター＋スコア）
+// 質問セット（menu.json準拠）
 // ===============================
 let questions = [
-  { text: "朝食向けの料理がいい？", key: "朝食", filter: "scene", sceneOrder: 1 },
-  { text: "昼食向けの料理がいい？", key: "昼食", filter: "scene", sceneOrder: 2 },
-  { text: "夕食向けの料理がいい？", key: "夕食", filter: "scene", sceneOrder: 3 },
-  { text: "夜食向けの軽い料理がいい？", key: "Q_夜食", filter: "scene", sceneOrder: 4 },
+  { text: "和食が食べたい？", key: "ジャンル", value: "和" },
+  { text: "洋食が食べたい？", key: "ジャンル", value: "洋" },
+  { text: "中華が食べたい？", key: "ジャンル", value: "中" },
+  { text: "韓国料理が食べたい？", key: "ジャンル", value: "韓" },
+  { text: "エスニック料理が食べたい？", key: "ジャンル", value: "エスニック" },
 
-  { text: "ご飯ものが食べたい？", key: "Q_米", branch: "rice", filter: "main" },
-  { text: "麺類が食べたい？", key: "Q_麺", branch: "noodle", filter: "main" },
-  { text: "パン系の料理が食べたい？", key: "Q_パン", branch: "bread", filter: "main" },
+  { text: "ご飯ものが食べたい？", key: "主食", value: "米" },
+  { text: "麺類が食べたい？", key: "主食", value: "麺" },
+  { text: "パン系が食べたい？", key: "主食", value: "パン" },
 
-  { text: "15分以内で作れる料理がいい？", key: "Q_超短時間", filter: "time" },
+  { text: "こってりした料理がいい？", key: "味の傾向", value: "こってり" },
+  { text: "あっさりした料理がいい？", key: "味の傾向", value: "あっさり" },
 
-  { text: "ちょっと高めの料理でもOK？", key: "高予算", filter: "budget" },
+  { text: "辛い料理が好き？", key: "味の特徴", value: "辛い" },
+  { text: "スパイシーな料理が好き？", key: "味の特徴", value: "スパイシー" },
+  { text: "クリーミーな料理が好き？", key: "味の特徴", value: "クリーミー" },
+  { text: "甘辛い味が好き？", key: "味の特徴", value: "甘辛" },
 
-  { text: "肉料理が食べたい？", key: "Q_肉" },
-  { text: "魚料理が食べたい？", key: "Q_魚" },
-  { text: "卵を使った料理が食べたい？", key: "Q_卵" },
-  { text: "野菜多めの料理がいい？", key: "Q_野菜" },
+  { text: "冬に合う料理がいい？", key: "季節", value: "冬" },
+  { text: "夏に合う料理がいい？", key: "季節", value: "夏" },
 
-  { text: "こってりした料理が食べたい？", key: "Q_こってり" },
-  { text: "あっさりした料理が食べたい？", key: "Q_あっさり" },
-  { text: "塩味の料理が好き？", key: "Q_塩味" },
-  { text: "クリーミーな料理が好き？", key: "Q_クリーミー" },
-  { text: "スパイシーな料理が好き？", key: "Q_スパイシー" },
+  { text: "15分以内で作れる料理がいい？", key: "調理時間(分)", value: 15, type: "time" },
 
-  { text: "揚げ物が食べたい？", key: "Q_揚げる" },
-  { text: "焼き料理が食べたい？", key: "Q_焼く" },
-  { text: "煮込み料理が食べたい？", key: "Q_煮る" },
-  { text: "炒め物が食べたい？", key: "Q_炒める" },
-  { text: "和え物が食べたい？", key: "Q_和える" }
+  { text: "安めの料理がいい？", key: "予算帯", value: "低" },
+  { text: "がっつり食べたい？", key: "ボリューム", value: "重い" },
+
+  { text: "朝食向けの料理がいい？", key: "時間帯", value: "朝食", type: "array" },
+  { text: "昼食向けの料理がいい？", key: "時間帯", value: "昼食", type: "array" },
+  { text: "夕食向けの料理がいい？", key: "時間帯", value: "夕食", type: "array" },
+  { text: "夜食向けの軽い料理がいい？", key: "時間帯", value: "夜食", type: "array" }
 ];
 
 const originalQuestions = JSON.parse(JSON.stringify(questions));
 
 let db = [];
-let filteredDB = [];
 let index = 0;
 let answers = [];
 
 // ===============================
 // JSON 読み込み
 // ===============================
-fetch("menu_fixed2.json")
+fetch("menu.json")
   .then(res => res.json())
   .then(data => {
     db = data;
-    filteredDB = [...db];
     showQuestion();
   });
 
 function showQuestion() {
   document.getElementById("question").innerText = questions[index].text;
-  document.getElementById("bar-inner").style.width = (index / questions.length) * 100 + "%";
+  document.getElementById("bar-inner").style.width =
+    ((index) / questions.length) * 100 + "%";
 }
 
 function answer(value) {
-  const q = questions[index];
-  answers.push({ key: q.key, value });
-
-  // YES のときだけフィルター適用
-  if (q.filter === "scene" && value > 0) {
-    filteredDB = filteredDB.filter(item => item[q.key] === true);
-    questions = questions.filter(qq => qq.filter !== "scene" || qq.sceneOrder <= q.sceneOrder);
-  }
-
-  if (q.filter === "main" && value > 0) {
-    filteredDB = filteredDB.filter(item => item[q.key] === true);
-    questions = questions.filter(qq => qq.filter !== "main" || qq.key === q.key);
-  }
-
-  if (q.filter === "time" && value > 0) {
-    filteredDB = filteredDB.filter(item => item["調理時間(分)"] <= 15);
-  }
-
-  if (q.filter === "budget" && value < 0) {
-    filteredDB = filteredDB.filter(item => item["高予算"] !== true);
-  }
-
+  answers.push({ q: questions[index], value });
   index++;
 
-  if (index >= questions.length) {
-    finish();
-  } else {
-    showQuestion();
-  }
+  if (index >= questions.length) finish();
+  else showQuestion();
 }
 
-function calcScores(data) {
-  data.forEach(item => {
+function calcScores() {
+  db.forEach(item => {
     item.score = 0;
+
     answers.forEach(a => {
-      if (item[a.key] === true) item.score += a.value;
+      const q = a.q;
+
+      if (q.type === "time") {
+        if (a.value > 0 && item[q.key] <= q.value) item.score += a.value;
+      }
+      else if (q.type === "array") {
+        if (item[q.key].includes(q.value)) item.score += a.value;
+      }
+      else if (q.key === "味の特徴") {
+        if (item["味の特徴"].includes(q.value)) item.score += a.value;
+      }
+      else {
+        if (item[q.key] === q.value) item.score += a.value;
+      }
     });
   });
-  return data.sort((a, b) => b.score - a.score);
+
+  return db.sort((a, b) => b.score - a.score);
 }
 
 function saveMenu(name, link) {
@@ -261,28 +269,18 @@ function finish() {
   document.getElementById("buttons").style.display = "none";
   document.getElementById("question").innerText = "あなたに合いそうな献立はこちら！";
 
-  let result = filteredDB.length > 0 ? filteredDB : [];
-
-  if (result.length === 0) {
-    document.getElementById("result").innerHTML = `
-      <div class="result-card">
-        <h3>ごめんね…</h3>
-        <p>条件に合う献立が見つからなかったよ💦</p>
-        <p>質問を少し変えてもう一度試してみてね！</p>
-      </div>
-    `;
-    return;
-  }
-
-  const top3 = calcScores(result).slice(0, 3);
+  const sorted = calcScores();
+  const top3 = sorted.slice(0, 3);
 
   let html = "";
   top3.forEach(item => {
+    const link = `https://cookpad.com/jp/search/${encodeURIComponent(item["メニュー名"])}`;
+
     html += `
       <div class="result-card">
         <h3>${item["メニュー名"]}</h3>
-        <a href="${item["Cookpadリンク"]}" target="_blank">レシピを見る</a><br>
-        <button class="save-btn" onclick="saveMenu('${item["メニュー名"]}', '${item["Cookpadリンク"]}')">
+        <a href="${link}" target="_blank">レシピを見る</a><br>
+        <button class="save-btn" onclick="saveMenu('${item["メニュー名"]}', '${link}')">
           お気に入りに追加
         </button>
       </div>
@@ -296,7 +294,6 @@ function restartGame() {
   index = 0;
   answers = [];
   questions = JSON.parse(JSON.stringify(originalQuestions));
-  filteredDB = [...db];
 
   document.getElementById("buttons").style.display = "flex";
   document.getElementById("result").innerHTML = "";
