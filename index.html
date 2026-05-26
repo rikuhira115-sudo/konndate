@@ -6,32 +6,47 @@
 <title>献立アキネーター</title>
 
 <style>
+:root {
+  --green-main: #66BB6A;
+  --green-light: #A5D6A7;
+  --green-bg: #E8F5E9;
+  --green-dark: #2E7D32;
+  --text-main: #2E4D34;
+}
+
 body {
   font-family: "Hiragino Sans", "Rounded Mplus 1c", sans-serif;
-  background: #E8F5E9; /* 優しい緑 */
+  background: var(--green-bg);
   text-align: center;
   padding: 20px;
   margin: 0;
-  color: #2E4D34;
+  color: var(--text-main);
 }
 
 h1 {
-  color: #2E7D32;
+  color: var(--green-dark);
   margin-bottom: 10px;
   font-weight: 700;
 }
 
-.fav-top-btn {
-  display: inline-block;
-  background: #66BB6A;
+.top-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  max-width: 450px;
+  margin: 0 auto 15px;
+}
+
+.top-btn {
+  background: var(--green-main);
   color: white;
-  padding: 12px 25px;
-  border-radius: 25px;
-  font-size: 16px;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-size: 14px;
   font-weight: bold;
   text-decoration: none;
-  margin-bottom: 20px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  border: none;
+  cursor: pointer;
 }
 
 #question-card {
@@ -57,14 +72,14 @@ h1 {
   width: 100%;
   border-radius: 12px;
   border: none;
-  background: #A5D6A7;
-  color: #1B5E20;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  background: var(--green-light);
+  color: var(--green-dark);
   transition: 0.2s;
 }
 
 .option-btn:hover {
-  background: #81C784;
+  background: var(--green-main);
+  color: white;
 }
 
 #bar {
@@ -79,7 +94,7 @@ h1 {
 #bar-inner {
   height: 100%;
   width: 0%;
-  background: #66BB6A;
+  background: var(--green-main);
   transition: width 0.3s ease;
 }
 
@@ -87,18 +102,13 @@ h1 {
   position: fixed;
   bottom: 15px;
   left: 15px;
-  background: #81C784;
+  background: var(--green-main);
   color: white;
   border: none;
   padding: 12px 15px;
   border-radius: 50%;
   font-size: 20px;
   cursor: pointer;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-}
-
-#result {
-  margin-top: 20px;
 }
 
 .result-card {
@@ -113,29 +123,28 @@ h1 {
 
 .result-card h3 {
   margin-top: 0;
-  color: #2E7D32;
+  color: var(--green-dark);
 }
 
 .save-btn {
   margin-top: 10px;
   padding: 10px 20px;
-  background: #66BB6A;
+  background: var(--green-main);
   color: white;
   border: none;
   border-radius: 20px;
   cursor: pointer;
-}
-
-@media (max-width: 480px) {
-  #question { font-size: 20px; }
-  .option-btn { font-size: 16px; padding: 12px; }
 }
 </style>
 </head>
 <body>
 
 <h1>献立アキネーター</h1>
-<a href="favorites.html" class="fav-top-btn">❤️ お気に入り</a>
+
+<div class="top-buttons">
+  <a href="favorites.html" class="top-btn">❤️ お気に入り</a>
+  <button class="top-btn" onclick="resetAll()">🔄 最初から</button>
+</div>
 
 <div id="question-card">
   <div id="question"></div>
@@ -150,9 +159,9 @@ h1 {
 
 <script>
 // ===============================
-// 質問セット（選択式）
+// 動的質問リスト
 // ===============================
-let questions = [
+let baseQuestions = [
   {
     text: "主食は？",
     key: "主食",
@@ -181,29 +190,33 @@ let questions = [
       { label: "肉料理", value: "肉" },
       { label: "肉以外", value: "非肉" }
     ]
-  },
-  {
-    text: "どの肉がいい？",
-    key: "主な材料",
-    condition: "肉",
-    options: [
-      { label: "牛肉", value: ["牛肉"] },
-      { label: "豚肉", value: ["豚肉"] },
-      { label: "鶏肉", value: ["鶏肉"] },
-      { label: "ひき肉", value: ["ひき肉","合いびき肉"] }
-    ]
-  },
-  {
-    text: "どれがいい？",
-    key: "主な材料",
-    condition: "非肉",
-    options: [
-      { label: "魚", value: ["鮭","白身魚","青魚","海老","イカ","タコ"] },
-      { label: "野菜", value: ["野菜"] },
-      { label: "豆腐", value: ["豆腐"] },
-      { label: "卵", value: ["卵"] }
-    ]
-  },
+  }
+];
+
+let meatQuestion = {
+  text: "どの肉がいい？",
+  key: "肉の種類",
+  options: [
+    { label: "牛肉", value: ["牛肉"] },
+    { label: "豚肉", value: ["豚肉"] },
+    { label: "鶏肉", value: ["鶏肉"] },
+    { label: "ひき肉", value: ["ひき肉","合いびき肉"] }
+  ]
+};
+
+let nonMeatQuestion = {
+  text: "肉以外の食材も選ぶ？",
+  key: "肉以外の材料",
+  options: [
+    { label: "魚", value: ["鮭","白身魚","青魚","海老","イカ","タコ"] },
+    { label: "野菜", value: ["野菜"] },
+    { label: "豆腐", value: ["豆腐"] },
+    { label: "卵", value: ["卵"] },
+    { label: "特になし", value: [] }
+  ]
+};
+
+let tailQuestions = [
   {
     text: "味の傾向は？",
     key: "味の傾向",
@@ -242,9 +255,50 @@ let questions = [
   }
 ];
 
-let db = [];
+// ===============================
+// 状態
+// ===============================
+let questions = [];
+let answers = {};
 let index = 0;
-let answers = [];
+let db = [];
+
+// ===============================
+// 状態保存
+// ===============================
+function saveState() {
+  localStorage.setItem("akinatorState", JSON.stringify({
+    index,
+    answers,
+    questions
+  }));
+}
+
+function loadState() {
+  const saved = localStorage.getItem("akinatorState");
+  if (!saved) return false;
+
+  const state = JSON.parse(saved);
+  index = state.index;
+  answers = state.answers;
+  questions = state.questions;
+  return true;
+}
+
+// ===============================
+// 初期化
+// ===============================
+function initQuestions() {
+  questions = [...baseQuestions];
+}
+
+function resetAll() {
+  index = 0;
+  answers = {};
+  initQuestions();
+  localStorage.removeItem("akinatorState");
+  showQuestion();
+}
 
 // ===============================
 // JSON 読み込み
@@ -253,6 +307,11 @@ fetch("menu.json")
   .then(res => res.json())
   .then(data => {
     db = data;
+
+    if (!loadState()) {
+      initQuestions();
+    }
+
     showQuestion();
   });
 
@@ -261,16 +320,6 @@ fetch("menu.json")
 // ===============================
 function showQuestion() {
   const q = questions[index];
-
-  // 条件付き質問（肉 or 非肉）
-  if (q.condition) {
-    const prev = answers.find(a => a.key === "食材タイプ");
-    if (!prev || prev.value !== q.condition) {
-      index++;
-      showQuestion();
-      return;
-    }
-  }
 
   document.getElementById("question").innerText = q.text;
 
@@ -283,6 +332,8 @@ function showQuestion() {
 
   document.getElementById("bar-inner").style.width =
     ((index) / questions.length) * 100 + "%";
+
+  saveState();
 }
 
 // ===============================
@@ -290,7 +341,18 @@ function showQuestion() {
 // ===============================
 function selectAnswer(value) {
   const q = questions[index];
-  answers.push({ key: q.key, value });
+  answers[q.key] = value;
+
+  // 肉料理を選んだら肉の種類質問を追加
+  if (q.key === "食材タイプ" && value === "肉") {
+    questions.splice(index + 1, 0, meatQuestion);
+  }
+
+  // 肉料理でも肉以外でも必ず追加質問を入れる
+  if (q.key === "食材タイプ") {
+    questions.splice(index + 2, 0, nonMeatQuestion);
+    questions = [...questions, ...tailQuestions];
+  }
 
   index++;
 
@@ -299,35 +361,48 @@ function selectAnswer(value) {
 }
 
 // ===============================
-// 戻るボタン
+// 戻る
 // ===============================
 function goBack() {
   if (index === 0) return;
 
   index--;
-  answers.pop();
+  const q = questions[index];
+  delete answers[q.key];
+
   showQuestion();
 }
 
 // ===============================
-// 結果計算
+// 結果
 // ===============================
 function finish() {
   let filtered = [...db];
 
-  answers.forEach(a => {
-    if (a.key === "主な材料") {
-      filtered = filtered.filter(item =>
-        item["主な材料"].some(mat => a.value.includes(mat))
-      );
-    } else if (a.key === "調理時間(分)") {
-      filtered = filtered.filter(item => item["調理時間(分)"] <= a.value);
-    } else if (a.key === "時間帯") {
-      filtered = filtered.filter(item => item["時間帯"].includes(a.value));
+  // 主な材料（肉 + 肉以外）を統合
+  let allMaterials = [];
+  if (answers["肉の種類"]) allMaterials.push(...answers["肉の種類"]);
+  if (answers["肉以外の材料"]) allMaterials.push(...answers["肉以外の材料"]);
+
+  Object.keys(answers).forEach(key => {
+    const value = answers[key];
+
+    if (key === "肉の種類" || key === "肉以外の材料") return;
+
+    if (key === "調理時間(分)") {
+      filtered = filtered.filter(item => item["調理時間(分)"] <= value);
+    } else if (key === "時間帯") {
+      filtered = filtered.filter(item => item["時間帯"].includes(value));
     } else {
-      filtered = filtered.filter(item => item[a.key] === a.value);
+      filtered = filtered.filter(item => item[key] === value);
     }
   });
+
+  if (allMaterials.length > 0) {
+    filtered = filtered.filter(item =>
+      item["主な材料"].some(mat => allMaterials.includes(mat))
+    );
+  }
 
   if (filtered.length === 0) filtered = db;
 
@@ -351,6 +426,8 @@ function finish() {
   document.getElementById("back-btn").style.display = "none";
 
   document.getElementById("result").innerHTML = html;
+
+  localStorage.removeItem("akinatorState");
 }
 
 // ===============================
