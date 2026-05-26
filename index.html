@@ -14,6 +14,9 @@
   --text-main: #2E4D34;
 }
 
+/* ===============================
+   全体
+=============================== */
 body {
   font-family: "Hiragino Sans", "Rounded Mplus 1c", sans-serif;
   background: var(--green-bg);
@@ -22,6 +25,7 @@ body {
   margin: 0;
   color: var(--text-main);
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1 {
@@ -30,6 +34,9 @@ h1 {
   font-weight: 700;
 }
 
+/* ===============================
+   上部ボタン
+=============================== */
 .top-buttons {
   display: flex;
   justify-content: space-between;
@@ -50,6 +57,9 @@ h1 {
   cursor: pointer;
 }
 
+/* ===============================
+   質問カード
+=============================== */
 #question-card {
   background: #FFFFFF;
   padding: 25px;
@@ -58,11 +68,11 @@ h1 {
   max-width: 450px;
   margin: 0 auto 20px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  animation: fadeIn 0.4s ease;
+  animation: fadeIn 0.35s ease;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -71,6 +81,9 @@ h1 {
   margin-bottom: 20px;
 }
 
+/* ===============================
+   選択肢ボタン（スマホ最適化）
+=============================== */
 .option-btn {
   padding: 14px;
   margin: 8px 0;
@@ -81,15 +94,23 @@ h1 {
   border: none;
   background: var(--green-light);
   color: var(--green-dark);
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background 0.15s ease, color 0.15s ease;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .option-btn:hover {
+  background: var(--green-light); /* ← hover無効化（スマホ対策） */
+}
+
+.option-btn:active {
   background: var(--green-main);
   color: white;
 }
 
+/* ===============================
+   進行ゲージ
+=============================== */
 #bar {
   width: 90%;
   height: 18px;
@@ -106,6 +127,9 @@ h1 {
   transition: width 0.4s ease;
 }
 
+/* ===============================
+   戻るボタン
+=============================== */
 #back-btn {
   position: fixed;
   bottom: 15px;
@@ -119,6 +143,9 @@ h1 {
   cursor: pointer;
 }
 
+/* ===============================
+   結果カード
+=============================== */
 .result-card {
   background: white;
   border-radius: 15px;
@@ -127,7 +154,7 @@ h1 {
   width: 90%;
   max-width: 400px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  animation: fadeIn 0.4s ease;
+  animation: fadeIn 0.35s ease;
 }
 
 .result-card h3 {
@@ -167,6 +194,9 @@ h1 {
 <div id="result"></div>
 
 <script>
+/* ===============================
+   質問セット
+=============================== */
 let questions = [
   {
     text: "主食は？",
@@ -202,18 +232,18 @@ let questions = [
     key: "肉の種類",
     condition: "肉",
     options: [
-      { label: "牛肉", value: ["牛肉"] },
-      { label: "豚肉", value: ["豚肉"] },
-      { label: "鶏肉", value: ["鶏肉"] },
-      { label: "ひき肉", value: ["ひき肉","合いびき肉"] }
+      { label: "牛肉", value: ["牛"] },
+      { label: "豚肉", value: ["豚"] },
+      { label: "鶏肉", value: ["鶏"] },
+      { label: "ひき肉", value: ["ひき","挽"] }
     ]
   },
   {
     text: "肉以外の食材も選ぶ？",
     key: "肉以外の材料",
     options: [
-      { label: "魚", value: ["鮭","白身魚","青魚","海老","イカ","タコ"] },
-      { label: "野菜", value: ["野菜"] },
+      { label: "魚", value: ["魚","鮭","鯖","白身"] },
+      { label: "野菜", value: ["玉ねぎ","にんじん","キャベツ","野菜"] },
       { label: "豆腐", value: ["豆腐"] },
       { label: "卵", value: ["卵"] },
       { label: "特になし", value: [] }
@@ -224,6 +254,7 @@ let questions = [
     key: "味の傾向",
     options: [
       { label: "こってり", value: "こってり" },
+      { label: "普通", value: "普通" },
       { label: "あっさり", value: "あっさり" }
     ]
   },
@@ -262,6 +293,9 @@ let index = 0;
 let answers = {};
 let isFinished = false;
 
+/* ===============================
+   JSON 読み込み
+=============================== */
 fetch("menu.json")
   .then(res => res.json())
   .then(data => {
@@ -269,6 +303,9 @@ fetch("menu.json")
     showQuestion();
   });
 
+/* ===============================
+   質問表示
+=============================== */
 function showQuestion() {
   const q = questions[index];
 
@@ -290,6 +327,9 @@ function showQuestion() {
     ((index) / questions.length) * 100 + "%";
 }
 
+/* ===============================
+   回答処理
+=============================== */
 function selectAnswer(value) {
   const q = questions[index];
   answers[q.key] = value;
@@ -300,6 +340,9 @@ function selectAnswer(value) {
   else showQuestion();
 }
 
+/* ===============================
+   戻る
+=============================== */
 function goBack() {
   if (isFinished) {
     isFinished = false;
@@ -324,6 +367,9 @@ function goBack() {
   showQuestion();
 }
 
+/* ===============================
+   最初から
+=============================== */
 function resetAll() {
   index = 0;
   answers = {};
@@ -334,68 +380,43 @@ function resetAll() {
   showQuestion();
 }
 
-// ★ スコア方式の結果計算
+/* ===============================
+   スコア方式の結果計算
+=============================== */
 function finish() {
   let scored = db.map(item => {
     let score = 0;
 
-    // 主食
     if (answers["主食"] && item["主食"] === answers["主食"]) score++;
-
-    // ジャンル
     if (answers["ジャンル"] && item["ジャンル"] === answers["ジャンル"]) score++;
-
-    // 味の傾向
     if (answers["味の傾向"] && item["味の傾向"] === answers["味の傾向"]) score++;
-
-    // ボリューム
     if (answers["ボリューム"] && item["ボリューム"] === answers["ボリューム"]) score++;
 
-    // 調理時間
     if (answers["調理時間(分)"] &&
         item["調理時間(分)"] <= answers["調理時間(分)"]) score++;
 
-    // 時間帯（配列 or 文字列想定）
     if (answers["時間帯"]) {
       const t = answers["時間帯"];
-      if (Array.isArray(item["時間帯"])) {
-        if (item["時間帯"].includes(t)) score++;
-      } else if (typeof item["時間帯"] === "string") {
-        if (item["時間帯"].includes(t)) score++;
-      }
+      if (item["時間帯"].includes(t)) score++;
     }
 
-    // 肉の種類
     if (answers["肉の種類"]) {
-      const selected = answers["肉の種類"]; // ["鶏肉"] など
-      if (item["主な材料"] && Array.isArray(item["主な材料"])) {
-        if (item["主な材料"].some(mat =>
-          selected.some(m => mat.includes(m.replace("肉","")))
-        )) {
-          score++;
-        }
-      }
+      if (item["主な材料"].some(mat =>
+        answers["肉の種類"].some(m => mat.includes(m))
+      )) score++;
     }
 
-    // 肉以外の材料
     if (answers["肉以外の材料"]) {
-      const selected = answers["肉以外の材料"]; // ["鮭","白身魚", ...] など
-      if (item["主な材料"] && Array.isArray(item["主な材料"])) {
-        if (item["主な材料"].some(mat =>
-          selected.some(m => mat.includes(m))
-        )) {
-          score++;
-        }
-      }
+      if (item["主な材料"].some(mat =>
+        answers["肉以外の材料"].some(m => mat.includes(m))
+      )) score++;
     }
 
     return { item, score };
   });
 
-  // スコア順にソート（高い順）
   scored.sort((a, b) => b.score - a.score);
 
-  // 上位3件を取得（スコア0でもとりあえず出す）
   const top3 = scored.slice(0, 3).map(s => s.item);
 
   let html = "";
@@ -418,6 +439,9 @@ function finish() {
   isFinished = true;
 }
 
+/* ===============================
+   お気に入り保存
+=============================== */
 function saveMenu(name, link) {
   let saved = JSON.parse(localStorage.getItem("savedMenus") || "[]");
 
@@ -428,6 +452,13 @@ function saveMenu(name, link) {
 
   alert("お気に入りに追加しました！");
 }
+
+/* ===============================
+   スマホのフォーカス残り対策
+=============================== */
+document.addEventListener("touchend", () => {
+  document.activeElement.blur();
+});
 </script>
 
 </body>
