@@ -6,6 +6,9 @@
 <title>献立アキネーター</title>
 
 <style>
+/* ===============================
+   カラーテーマ
+=============================== */
 :root {
   --green-main: #66BB6A;
   --green-light: #A5D6A7;
@@ -14,6 +17,9 @@
   --text-main: #2E4D34;
 }
 
+/* ===============================
+   背景の葉っぱアニメーション
+=============================== */
 body {
   font-family: "Hiragino Sans", "Rounded Mplus 1c", sans-serif;
   background: var(--green-bg);
@@ -21,8 +27,32 @@ body {
   padding: 20px;
   margin: 0;
   color: var(--text-main);
+  position: relative;
+  overflow-x: hidden;
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  top: -50px;
+  left: -50px;
+  width: 300px;
+  height: 300px;
+  background: url('https://i.imgur.com/8fK4V7H.png') no-repeat center/contain;
+  opacity: 0.07;
+  animation: leaf 12s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes leaf {
+  0% { transform: rotate(0deg) translateY(0px); }
+  50% { transform: rotate(6deg) translateY(10px); }
+  100% { transform: rotate(0deg) translateY(0px); }
+}
+
+/* ===============================
+   タイトル・トップボタン
+=============================== */
 h1 {
   color: var(--green-dark);
   margin-bottom: 10px;
@@ -49,6 +79,9 @@ h1 {
   cursor: pointer;
 }
 
+/* ===============================
+   質問カード（フェードイン）
+=============================== */
 #question-card {
   background: #FFFFFF;
   padding: 25px;
@@ -57,6 +90,12 @@ h1 {
   max-width: 450px;
   margin: 0 auto 20px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 #question {
@@ -64,6 +103,9 @@ h1 {
   margin-bottom: 20px;
 }
 
+/* ===============================
+   選択肢ボタン（軽いフェードのみ）
+=============================== */
 .option-btn {
   padding: 14px;
   margin: 8px 0;
@@ -74,7 +116,9 @@ h1 {
   border: none;
   background: var(--green-light);
   color: var(--green-dark);
-  transition: 0.2s;
+  transition: background 0.2s ease, color 0.2s ease;
+  outline: none;
+  touch-action: manipulation;
 }
 
 .option-btn:hover {
@@ -82,6 +126,9 @@ h1 {
   color: white;
 }
 
+/* ===============================
+   ゲージ
+=============================== */
 #bar {
   width: 90%;
   height: 18px;
@@ -95,9 +142,12 @@ h1 {
   height: 100%;
   width: 0%;
   background: var(--green-main);
-  transition: width 0.3s ease;
+  transition: width 0.4s ease;
 }
 
+/* ===============================
+   戻るボタン
+=============================== */
 #back-btn {
   position: fixed;
   bottom: 15px;
@@ -111,6 +161,9 @@ h1 {
   cursor: pointer;
 }
 
+/* ===============================
+   結果カード（フェードイン）
+=============================== */
 .result-card {
   background: white;
   border-radius: 15px;
@@ -119,6 +172,7 @@ h1 {
   width: 90%;
   max-width: 400px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  animation: fadeIn 0.4s ease;
 }
 
 .result-card h3 {
@@ -158,10 +212,10 @@ h1 {
 <div id="result"></div>
 
 <script>
-// ===============================
-// 動的質問リスト
-// ===============================
-let baseQuestions = [
+/* ===============================
+   質問セット（固定）
+=============================== */
+let questions = [
   {
     text: "主食は？",
     key: "主食",
@@ -190,33 +244,29 @@ let baseQuestions = [
       { label: "肉料理", value: "肉" },
       { label: "肉以外", value: "非肉" }
     ]
-  }
-];
-
-let meatQuestion = {
-  text: "どの肉がいい？",
-  key: "肉の種類",
-  options: [
-    { label: "牛肉", value: ["牛肉"] },
-    { label: "豚肉", value: ["豚肉"] },
-    { label: "鶏肉", value: ["鶏肉"] },
-    { label: "ひき肉", value: ["ひき肉","合いびき肉"] }
-  ]
-};
-
-let nonMeatQuestion = {
-  text: "肉以外の食材も選ぶ？",
-  key: "肉以外の材料",
-  options: [
-    { label: "魚", value: ["鮭","白身魚","青魚","海老","イカ","タコ"] },
-    { label: "野菜", value: ["野菜"] },
-    { label: "豆腐", value: ["豆腐"] },
-    { label: "卵", value: ["卵"] },
-    { label: "特になし", value: [] }
-  ]
-};
-
-let tailQuestions = [
+  },
+  {
+    text: "どの肉がいい？",
+    key: "肉の種類",
+    condition: "肉",
+    options: [
+      { label: "牛肉", value: ["牛肉"] },
+      { label: "豚肉", value: ["豚肉"] },
+      { label: "鶏肉", value: ["鶏肉"] },
+      { label: "ひき肉", value: ["ひき肉","合いびき肉"] }
+    ]
+  },
+  {
+    text: "肉以外の食材も選ぶ？",
+    key: "肉以外の材料",
+    options: [
+      { label: "魚", value: ["鮭","白身魚","青魚","海老","イカ","タコ"] },
+      { label: "野菜", value: ["野菜"] },
+      { label: "豆腐", value: ["豆腐"] },
+      { label: "卵", value: ["卵"] },
+      { label: "特になし", value: [] }
+    ]
+  },
   {
     text: "味の傾向は？",
     key: "味の傾向",
@@ -255,71 +305,34 @@ let tailQuestions = [
   }
 ];
 
-// ===============================
-// 状態
-// ===============================
-let questions = [];
-let answers = {};
-let index = 0;
 let db = [];
+let index = 0;
+let answers = {};
 
-// ===============================
-// 状態保存
-// ===============================
-function saveState() {
-  localStorage.setItem("akinatorState", JSON.stringify({
-    index,
-    answers,
-    questions
-  }));
-}
-
-function loadState() {
-  const saved = localStorage.getItem("akinatorState");
-  if (!saved) return false;
-
-  const state = JSON.parse(saved);
-  index = state.index;
-  answers = state.answers;
-  questions = state.questions;
-  return true;
-}
-
-// ===============================
-// 初期化
-// ===============================
-function initQuestions() {
-  questions = [...baseQuestions];
-}
-
-function resetAll() {
-  index = 0;
-  answers = {};
-  initQuestions();
-  localStorage.removeItem("akinatorState");
-  showQuestion();
-}
-
-// ===============================
-// JSON 読み込み
-// ===============================
+/* ===============================
+   JSON 読み込み
+=============================== */
 fetch("menu.json")
   .then(res => res.json())
   .then(data => {
     db = data;
-
-    if (!loadState()) {
-      initQuestions();
-    }
-
     showQuestion();
   });
 
-// ===============================
-// 質問表示
-// ===============================
+/* ===============================
+   質問表示
+=============================== */
 function showQuestion() {
   const q = questions[index];
+
+  // 条件付き質問（肉）
+  if (q.condition) {
+    if (answers["食材タイプ"] !== q.condition) {
+      index++;
+      showQuestion();
+      return;
+    }
+  }
 
   document.getElementById("question").innerText = q.text;
 
@@ -332,27 +345,14 @@ function showQuestion() {
 
   document.getElementById("bar-inner").style.width =
     ((index) / questions.length) * 100 + "%";
-
-  saveState();
 }
 
-// ===============================
-// 回答処理
-// ===============================
+/* ===============================
+   回答処理
+=============================== */
 function selectAnswer(value) {
   const q = questions[index];
   answers[q.key] = value;
-
-  // 肉料理を選んだら肉の種類質問を追加
-  if (q.key === "食材タイプ" && value === "肉") {
-    questions.splice(index + 1, 0, meatQuestion);
-  }
-
-  // 肉料理でも肉以外でも必ず追加質問を入れる
-  if (q.key === "食材タイプ") {
-    questions.splice(index + 2, 0, nonMeatQuestion);
-    questions = [...questions, ...tailQuestions];
-  }
 
   index++;
 
@@ -360,9 +360,9 @@ function selectAnswer(value) {
   else showQuestion();
 }
 
-// ===============================
-// 戻る
-// ===============================
+/* ===============================
+   戻る
+=============================== */
 function goBack() {
   if (index === 0) return;
 
@@ -373,13 +373,21 @@ function goBack() {
   showQuestion();
 }
 
-// ===============================
-// 結果
-// ===============================
+/* ===============================
+   最初から
+=============================== */
+function resetAll() {
+  index = 0;
+  answers = {};
+  showQuestion();
+}
+
+/* ===============================
+   結果
+=============================== */
 function finish() {
   let filtered = [...db];
 
-  // 主な材料（肉 + 肉以外）を統合
   let allMaterials = [];
   if (answers["肉の種類"]) allMaterials.push(...answers["肉の種類"]);
   if (answers["肉以外の材料"]) allMaterials.push(...answers["肉以外の材料"]);
@@ -426,13 +434,11 @@ function finish() {
   document.getElementById("back-btn").style.display = "none";
 
   document.getElementById("result").innerHTML = html;
-
-  localStorage.removeItem("akinatorState");
 }
 
-// ===============================
-// お気に入り保存
-// ===============================
+/* ===============================
+   お気に入り保存
+=============================== */
 function saveMenu(name, link) {
   let saved = JSON.parse(localStorage.getItem("savedMenus") || "[]");
 
