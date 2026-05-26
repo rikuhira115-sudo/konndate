@@ -8,21 +8,22 @@
 <style>
 body {
   font-family: "Hiragino Sans", "Rounded Mplus 1c", sans-serif;
-  background: #FFF8F0;
+  background: #E8F5E9; /* 優しい緑 */
   text-align: center;
   padding: 20px;
   margin: 0;
-  color: #444;
+  color: #2E4D34;
 }
 
 h1 {
-  color: #FF8FA3;
+  color: #2E7D32;
   margin-bottom: 10px;
+  font-weight: 700;
 }
 
 .fav-top-btn {
   display: inline-block;
-  background: #FF8FA3;
+  background: #66BB6A;
   color: white;
   padding: 12px 25px;
   border-radius: 25px;
@@ -33,36 +34,43 @@ h1 {
   box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
+#question-card {
+  background: #FFFFFF;
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 450px;
+  margin: 0 auto 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
 #question {
   font-size: 22px;
-  margin: 30px 0;
-  min-height: 80px;
+  margin-bottom: 20px;
 }
 
-.btn {
-  padding: 14px 25px;
-  margin: 8px;
+.option-btn {
+  padding: 14px;
+  margin: 8px 0;
   font-size: 18px;
   cursor: pointer;
-  width: 90%;
-  max-width: 300px;
-  border-radius: 25px;
+  width: 100%;
+  border-radius: 12px;
   border: none;
-  background: #FFB6C1;
-  color: white;
+  background: #A5D6A7;
+  color: #1B5E20;
   box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  transition: 0.2s;
 }
 
-#buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.option-btn:hover {
+  background: #81C784;
 }
 
 #bar {
   width: 90%;
   height: 18px;
-  background: #F2DCDC;
+  background: #C8E6C9;
   margin: 20px auto;
   border-radius: 10px;
   overflow: hidden;
@@ -71,8 +79,26 @@ h1 {
 #bar-inner {
   height: 100%;
   width: 0%;
-  background: #A7C7E7;
+  background: #66BB6A;
   transition: width 0.3s ease;
+}
+
+#back-btn {
+  position: fixed;
+  bottom: 15px;
+  left: 15px;
+  background: #81C784;
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+#result {
+  margin-top: 20px;
 }
 
 .result-card {
@@ -87,146 +113,136 @@ h1 {
 
 .result-card h3 {
   margin-top: 0;
-  color: #FF8FA3;
+  color: #2E7D32;
 }
 
 .save-btn {
   margin-top: 10px;
   padding: 10px 20px;
-  background: #FF8FA3;
+  background: #66BB6A;
   color: white;
   border: none;
   border-radius: 20px;
   cursor: pointer;
 }
 
-#result {
-  padding-bottom: 180px;
-}
-
-#restart {
-  position: fixed;
-  bottom: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 300px;
-  padding: 14px;
-  font-size: 18px;
-  border-radius: 25px;
-  background: #FF8FA3;
-  color: white;
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-  z-index: 999;
-}
-
 @media (max-width: 480px) {
   #question { font-size: 20px; }
-  .btn { font-size: 16px; padding: 12px; }
-  #restart { font-size: 16px; padding: 12px; }
+  .option-btn { font-size: 16px; padding: 12px; }
 }
 </style>
 </head>
 <body>
 
 <h1>献立アキネーター</h1>
+<a href="favorites.html" class="fav-top-btn">❤️ お気に入り</a>
 
-<a href="favorites.html" class="fav-top-btn">❤️ お気に入りを見る</a>
-
-<div id="question"></div>
-
-<div id="buttons">
-  <button class="btn" onclick="answer(2)">はい</button>
-  <button class="btn" onclick="answer(1)">ややそう</button>
-  <button class="btn" onclick="answer(0)">どちらでもない</button>
-  <button class="btn" onclick="answer(-1)">あまりそうでない</button>
-  <button class="btn" onclick="answer(-2)">いいえ</button>
+<div id="question-card">
+  <div id="question"></div>
+  <div id="options"></div>
 </div>
 
 <div id="bar"><div id="bar-inner"></div></div>
 
-<div id="result"></div>
+<button id="back-btn" onclick="goBack()">←</button>
 
-<button id="restart" onclick="restartGame()">最初からやり直す</button>
+<div id="result"></div>
 
 <script>
 // ===============================
-// 質問セット（フィルター＋ブランチカット）
+// 質問セット（選択式）
 // ===============================
 let questions = [
-  // --- ジャンル ---
-  { text: "和食がいい？", key: "ジャンル", value: "和", branchGroup: "genre", filterType: "exact" },
-  { text: "洋食がいい？", key: "ジャンル", value: "洋", branchGroup: "genre", filterType: "exact" },
-  { text: "中華がいい？", key: "ジャンル", value: "中", branchGroup: "genre", filterType: "exact" },
-  { text: "韓国料理がいい？", key: "ジャンル", value: "韓", branchGroup: "genre", filterType: "exact" },
-  { text: "エスニック料理がいい？", key: "ジャンル", value: "エスニック", branchGroup: "genre", filterType: "exact" },
-
-  // --- 主食 ---
-  { text: "ご飯ものがいい？", key: "主食", value: "米", branchGroup: "staple", filterType: "exact" },
-  { text: "麺類がいい？", key: "主食", value: "麺", branchGroup: "staple", filterType: "exact" },
-  { text: "パン系がいい？", key: "主食", value: "パン", branchGroup: "staple", filterType: "exact" },
-  { text: "主食なしの料理がいい？", key: "主食", value: "なし", branchGroup: "staple", filterType: "exact" },
-
-  // --- 味の傾向 ---
-  { text: "こってりした料理がいい？", key: "味の傾向", value: "こってり", branchGroup: "rich", filterType: "exact" },
-  { text: "あっさりした料理がいい？", key: "味の傾向", value: "あっさり", branchGroup: "rich", filterType: "exact" },
-  { text: "味の濃さは普通がいい？", key: "味の傾向", value: "普通", branchGroup: "rich", filterType: "exact" },
-
-  // --- 材料分類（細分化） ---
-  { text: "牛肉料理がいい？", key: "主な材料", value: ["牛肉"], filterType: "includesAny", branchGroup: "meat" },
-  { text: "豚肉料理がいい？", key: "主な材料", value: ["豚肉"], filterType: "includesAny", branchGroup: "meat" },
-  { text: "鶏肉料理がいい？", key: "主な材料", value: ["鶏肉"], filterType: "includesAny", branchGroup: "meat" },
-  { text: "ひき肉料理がいい？", key: "主な材料", value: ["ひき肉","合いびき肉"], filterType: "includesAny", branchGroup: "meat" },
-
-  { text: "魚料理がいい？", key: "主な材料", value: ["鮭","白身魚","青魚","イカ","タコ","海老"], filterType: "includesAny" },
-  { text: "卵料理がいい？", key: "主な材料", value: ["卵"], filterType: "includesAny" },
-  { text: "野菜多めの料理がいい？", key: "主な材料", value: ["野菜"], filterType: "includesAny" },
-  { text: "豆腐料理がいい？", key: "主な材料", value: ["豆腐"], filterType: "includesAny" },
-
-  // --- 味の特徴 ---
-  { text: "甘辛い味が好き？", key: "味の特徴", value: "甘辛" },
-  { text: "醤油味が好き？", key: "味の特徴", value: "醤油味" },
-  { text: "塩味が好き？", key: "味の特徴", value: "塩味" },
-  { text: "味噌味が好き？", key: "味の特徴", value: "味噌味" },
-  { text: "クリーミーな味が好き？", key: "味の特徴", value: "クリーミー" },
-
-  // --- 辛さ（排他的） ---
-  { text: "辛い料理が好き？", key: "味の特徴", value: "辛い", branchGroup: "spicy" },
-  { text: "スパイシーな料理が好き？", key: "味の特徴", value: "スパイシー", branchGroup: "spicy" },
-
-  // --- 季節 ---
-  { text: "春に合う料理がいい？", key: "季節", value: "春", branchGroup: "season", filterType: "exact" },
-  { text: "夏に合う料理がいい？", key: "季節", value: "夏", branchGroup: "season", filterType: "exact" },
-  { text: "秋に合う料理がいい？", key: "季節", value: "秋", branchGroup: "season", filterType: "exact" },
-  { text: "冬に合う料理がいい？", key: "季節", value: "冬", branchGroup: "season", filterType: "exact" },
-  { text: "季節は気にしない？", key: "季節", value: "オール", branchGroup: "season", filterType: "exact" },
-
-  // --- 調理時間 ---
-  { text: "15分以内で作れる料理がいい？", key: "調理時間(分)", value: 15, type: "time" },
-
-  // --- 予算（ブランチカット追加） ---
-  { text: "安めの料理がいい？", key: "予算帯", value: "低", filterType: "exact", branchGroup: "budget" },
-  { text: "普通の予算でいい？", key: "予算帯", value: "中", filterType: "exact", branchGroup: "budget" },
-  { text: "高めの料理でもいい？", key: "予算帯", value: "高", filterType: "exact", branchGroup: "budget" },
-
-  // --- ボリューム（ブランチカット追加） ---
-  { text: "軽めの料理がいい？", key: "ボリューム", value: "軽い", filterType: "exact", branchGroup: "volume" },
-  { text: "普通くらいの量がいい？", key: "ボリューム", value: "普通", filterType: "exact", branchGroup: "volume" },
-  { text: "しっかり食べたい？", key: "ボリューム", value: "重い", filterType: "exact", branchGroup: "volume" },
-
-  // --- 時間帯 ---
-  { text: "朝食向けの料理がいい？", key: "時間帯", value: "朝食", type: "array", branchGroup: "time" },
-  { text: "昼食向けの料理がいい？", key: "時間帯", value: "昼食", type: "array", branchGroup: "time" },
-  { text: "夕食向けの料理がいい？", key: "時間帯", value: "夕食", type: "array", branchGroup: "time" },
-  { text: "夜食向けの料理がいい？", key: "時間帯", value: "夜食", type: "array", branchGroup: "time" }
+  {
+    text: "主食は？",
+    key: "主食",
+    options: [
+      { label: "ごはん", value: "米" },
+      { label: "パン", value: "パン" },
+      { label: "麺", value: "麺" },
+      { label: "その他", value: "なし" }
+    ]
+  },
+  {
+    text: "ジャンルは？",
+    key: "ジャンル",
+    options: [
+      { label: "和食", value: "和" },
+      { label: "洋食", value: "洋" },
+      { label: "中華", value: "中" },
+      { label: "韓国", value: "韓" },
+      { label: "エスニック", value: "エスニック" }
+    ]
+  },
+  {
+    text: "メイン食材は？",
+    key: "食材タイプ",
+    options: [
+      { label: "肉料理", value: "肉" },
+      { label: "肉以外", value: "非肉" }
+    ]
+  },
+  {
+    text: "どの肉がいい？",
+    key: "主な材料",
+    condition: "肉",
+    options: [
+      { label: "牛肉", value: ["牛肉"] },
+      { label: "豚肉", value: ["豚肉"] },
+      { label: "鶏肉", value: ["鶏肉"] },
+      { label: "ひき肉", value: ["ひき肉","合いびき肉"] }
+    ]
+  },
+  {
+    text: "どれがいい？",
+    key: "主な材料",
+    condition: "非肉",
+    options: [
+      { label: "魚", value: ["鮭","白身魚","青魚","海老","イカ","タコ"] },
+      { label: "野菜", value: ["野菜"] },
+      { label: "豆腐", value: ["豆腐"] },
+      { label: "卵", value: ["卵"] }
+    ]
+  },
+  {
+    text: "味の傾向は？",
+    key: "味の傾向",
+    options: [
+      { label: "こってり", value: "こってり" },
+      { label: "あっさり", value: "あっさり" }
+    ]
+  },
+  {
+    text: "ボリュームは？",
+    key: "ボリューム",
+    options: [
+      { label: "軽め", value: "軽い" },
+      { label: "普通", value: "普通" },
+      { label: "がっつり", value: "重い" }
+    ]
+  },
+  {
+    text: "調理時間は？",
+    key: "調理時間(分)",
+    options: [
+      { label: "15分以内", value: 15 },
+      { label: "30分以内", value: 30 },
+      { label: "こだわらない", value: 999 }
+    ]
+  },
+  {
+    text: "いつ食べる？",
+    key: "時間帯",
+    options: [
+      { label: "朝", value: "朝食" },
+      { label: "昼", value: "昼食" },
+      { label: "夜", value: "夕食" },
+      { label: "夜食", value: "夜食" }
+    ]
+  }
 ];
 
-const originalQuestions = JSON.parse(JSON.stringify(questions));
-
 let db = [];
-let filteredDB = [];
 let index = 0;
 let answers = [];
 
@@ -237,92 +253,85 @@ fetch("menu.json")
   .then(res => res.json())
   .then(data => {
     db = data;
-    filteredDB = [...db];
     showQuestion();
   });
 
+// ===============================
+// 質問表示
+// ===============================
 function showQuestion() {
-  document.getElementById("question").innerText = questions[index].text;
+  const q = questions[index];
+
+  // 条件付き質問（肉 or 非肉）
+  if (q.condition) {
+    const prev = answers.find(a => a.key === "食材タイプ");
+    if (!prev || prev.value !== q.condition) {
+      index++;
+      showQuestion();
+      return;
+    }
+  }
+
+  document.getElementById("question").innerText = q.text;
+
+  let html = "";
+  q.options.forEach(opt => {
+    html += `<button class="option-btn" onclick='selectAnswer(${JSON.stringify(opt.value)})'>${opt.label}</button>`;
+  });
+
+  document.getElementById("options").innerHTML = html;
+
   document.getElementById("bar-inner").style.width =
     ((index) / questions.length) * 100 + "%";
 }
 
-function answer(value) {
+// ===============================
+// 回答処理
+// ===============================
+function selectAnswer(value) {
   const q = questions[index];
+  answers.push({ key: q.key, value });
 
-  // YES のときだけブランチカット
-  if (value > 0 && q.branchGroup) {
-    questions = questions.filter((qq, i) =>
-      i <= index || qq.branchGroup !== q.branchGroup
-    );
-  }
-
-  // フィルター処理
-  if (value > 0 && q.filterType === "exact") {
-    filteredDB = filteredDB.filter(item => item[q.key] === q.value);
-  }
-
-  if (value > 0 && q.filterType === "includesAny") {
-    filteredDB = filteredDB.filter(item =>
-      item[q.key].some(mat => q.value.includes(mat))
-    );
-  }
-
-  answers.push({ q, value });
   index++;
 
   if (index >= questions.length) finish();
   else showQuestion();
 }
 
-function calcScores() {
-  // fallback：候補ゼロなら全体から選ぶ
-  const target = filteredDB.length > 0 ? filteredDB : db;
+// ===============================
+// 戻るボタン
+// ===============================
+function goBack() {
+  if (index === 0) return;
 
-  target.forEach(item => {
-    item.score = 0;
+  index--;
+  answers.pop();
+  showQuestion();
+}
 
-    answers.forEach(a => {
-      const q = a.q;
+// ===============================
+// 結果計算
+// ===============================
+function finish() {
+  let filtered = [...db];
 
-      if (q.type === "time") {
-        if (a.value > 0 && item[q.key] <= q.value) item.score += a.value;
-      }
-      else if (q.type === "array") {
-        if (item[q.key].includes(q.value)) item.score += a.value;
-      }
-      else if (q.key === "味の特徴") {
-        if (item["味の特徴"].includes(q.value)) item.score += a.value;
-      }
-      else if (q.filterType === "includesAny") {
-        if (item[q.key].some(mat => q.value.includes(mat))) item.score += a.value;
-      }
-      else {
-        if (item[q.key] === q.value) item.score += a.value;
-      }
-    });
+  answers.forEach(a => {
+    if (a.key === "主な材料") {
+      filtered = filtered.filter(item =>
+        item["主な材料"].some(mat => a.value.includes(mat))
+      );
+    } else if (a.key === "調理時間(分)") {
+      filtered = filtered.filter(item => item["調理時間(分)"] <= a.value);
+    } else if (a.key === "時間帯") {
+      filtered = filtered.filter(item => item["時間帯"].includes(a.value));
+    } else {
+      filtered = filtered.filter(item => item[a.key] === a.value);
+    }
   });
 
-  return target.sort((a, b) => b.score - a.score);
-}
+  if (filtered.length === 0) filtered = db;
 
-function saveMenu(name, link) {
-  let saved = JSON.parse(localStorage.getItem("savedMenus") || "[]");
-
-  if (!saved.some(item => item.name === name)) {
-    saved.push({ name: name, link: link });
-    localStorage.setItem("savedMenus", JSON.stringify(saved));
-  }
-
-  alert("お気に入りに追加したよ！");
-}
-
-function finish() {
-  document.getElementById("buttons").style.display = "none";
-  document.getElementById("question").innerText = "あなたに合いそうな献立はこちら！";
-
-  const sorted = calcScores();
-  const top3 = sorted.slice(0, 3);
+  const top3 = filtered.slice(0, 3);
 
   let html = "";
   top3.forEach(item => {
@@ -332,27 +341,30 @@ function finish() {
       <div class="result-card">
         <h3>${item["メニュー名"]}</h3>
         <a href="${link}" target="_blank">レシピを見る</a><br>
-        <button class="save-btn" onclick="saveMenu('${item["メニュー名"]}', '${link}')">
-          お気に入りに追加
-        </button>
+        <button class="save-btn" onclick="saveMenu('${item["メニュー名"]}', '${link}')">お気に入りに追加</button>
       </div>
     `;
   });
 
+  document.getElementById("question-card").style.display = "none";
+  document.getElementById("bar").style.display = "none";
+  document.getElementById("back-btn").style.display = "none";
+
   document.getElementById("result").innerHTML = html;
 }
 
-function restartGame() {
-  index = 0;
-  answers = [];
-  filteredDB = [...db];
-  questions = JSON.parse(JSON.stringify(originalQuestions));
+// ===============================
+// お気に入り保存
+// ===============================
+function saveMenu(name, link) {
+  let saved = JSON.parse(localStorage.getItem("savedMenus") || "[]");
 
-  document.getElementById("buttons").style.display = "flex";
-  document.getElementById("result").innerHTML = "";
-  document.getElementById("bar-inner").style.width = "0%";
+  if (!saved.some(item => item.name === name)) {
+    saved.push({ name, link });
+    localStorage.setItem("savedMenus", JSON.stringify(saved));
+  }
 
-  showQuestion();
+  alert("お気に入りに追加しました！");
 }
 </script>
 
