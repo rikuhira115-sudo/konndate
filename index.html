@@ -334,38 +334,69 @@ function resetAll() {
   showQuestion();
 }
 
+// ★ スコア方式の結果計算
 function finish() {
-  let filtered = [...db];
+  let scored = db.map(item => {
+    let score = 0;
 
-  let allMaterials = [];
-  if (answers["肉の種類"]) allMaterials.push(...answers["肉の種類"]);
-  if (answers["肉以外の材料"]) allMaterials.push(...answers["肉以外の材料"]);
+    // 主食
+    if (answers["主食"] && item["主食"] === answers["主食"]) score++;
 
-  Object.keys(answers).forEach(key => {
-    const value = answers[key];
+    // ジャンル
+    if (answers["ジャンル"] && item["ジャンル"] === answers["ジャンル"]) score++;
 
-    if (key === "肉の種類" || key === "肉以外の材料") return;
+    // 味の傾向
+    if (answers["味の傾向"] && item["味の傾向"] === answers["味の傾向"]) score++;
 
-    if (key === "調理時間(分)") {
-      filtered = filtered.filter(item => item["調理時間(分)"] <= value);
-    } else if (key === "時間帯") {
-      filtered = filtered.filter(item => item["時間帯"].includes(value));
-    } else {
-      filtered = filtered.filter(item => item[key] === value);
+    // ボリューム
+    if (answers["ボリューム"] && item["ボリューム"] === answers["ボリューム"]) score++;
+
+    // 調理時間
+    if (answers["調理時間(分)"] &&
+        item["調理時間(分)"] <= answers["調理時間(分)"]) score++;
+
+    // 時間帯（配列 or 文字列想定）
+    if (answers["時間帯"]) {
+      const t = answers["時間帯"];
+      if (Array.isArray(item["時間帯"])) {
+        if (item["時間帯"].includes(t)) score++;
+      } else if (typeof item["時間帯"] === "string") {
+        if (item["時間帯"].includes(t)) score++;
+      }
     }
+
+    // 肉の種類
+    if (answers["肉の種類"]) {
+      const selected = answers["肉の種類"]; // ["鶏肉"] など
+      if (item["主な材料"] && Array.isArray(item["主な材料"])) {
+        if (item["主な材料"].some(mat =>
+          selected.some(m => mat.includes(m.replace("肉","")))
+        )) {
+          score++;
+        }
+      }
+    }
+
+    // 肉以外の材料
+    if (answers["肉以外の材料"]) {
+      const selected = answers["肉以外の材料"]; // ["鮭","白身魚", ...] など
+      if (item["主な材料"] && Array.isArray(item["主な材料"])) {
+        if (item["主な材料"].some(mat =>
+          selected.some(m => mat.includes(m))
+        )) {
+          score++;
+        }
+      }
+    }
+
+    return { item, score };
   });
 
-  if (allMaterials.length > 0) {
-    filtered = filtered.filter(item =>
-      item["主な材料"].some(mat =>
-        allMaterials.some(m => mat.includes(m))
-      )
-    );
-  }
+  // スコア順にソート（高い順）
+  scored.sort((a, b) => b.score - a.score);
 
-  if (filtered.length === 0) filtered = db;
-
-  const top3 = filtered.slice(0, 3);
+  // 上位3件を取得（スコア0でもとりあえず出す）
+  const top3 = scored.slice(0, 3).map(s => s.item);
 
   let html = "";
   top3.forEach(item => {
@@ -382,7 +413,6 @@ function finish() {
 
   document.getElementById("question-card").style.display = "none";
   document.getElementById("bar").style.display = "none";
-
   document.getElementById("result").innerHTML = html;
 
   isFinished = true;
