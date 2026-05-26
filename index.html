@@ -6,9 +6,6 @@
 <title>献立アキネーター</title>
 
 <style>
-/* ===============================
-   カラーテーマ
-=============================== */
 :root {
   --green-main: #66BB6A;
   --green-light: #A5D6A7;
@@ -17,9 +14,6 @@
   --text-main: #2E4D34;
 }
 
-/* ===============================
-   背景の葉っぱアニメーション
-=============================== */
 body {
   font-family: "Hiragino Sans", "Rounded Mplus 1c", sans-serif;
   background: var(--green-bg);
@@ -27,32 +21,9 @@ body {
   padding: 20px;
   margin: 0;
   color: var(--text-main);
-  position: relative;
   overflow-x: hidden;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  top: -50px;
-  left: -50px;
-  width: 300px;
-  height: 300px;
-  background: url('https://i.imgur.com/8fK4V7H.png') no-repeat center/contain;
-  opacity: 0.07;
-  animation: leaf 12s infinite ease-in-out;
-  pointer-events: none;
-}
-
-@keyframes leaf {
-  0% { transform: rotate(0deg) translateY(0px); }
-  50% { transform: rotate(6deg) translateY(10px); }
-  100% { transform: rotate(0deg) translateY(0px); }
-}
-
-/* ===============================
-   タイトル・トップボタン
-=============================== */
 h1 {
   color: var(--green-dark);
   margin-bottom: 10px;
@@ -79,9 +50,6 @@ h1 {
   cursor: pointer;
 }
 
-/* ===============================
-   質問カード（フェードイン）
-=============================== */
 #question-card {
   background: #FFFFFF;
   padding: 25px;
@@ -103,9 +71,6 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* ===============================
-   選択肢ボタン（軽いフェードのみ）
-=============================== */
 .option-btn {
   padding: 14px;
   margin: 8px 0;
@@ -118,7 +83,6 @@ h1 {
   color: var(--green-dark);
   transition: background 0.2s ease, color 0.2s ease;
   outline: none;
-  touch-action: manipulation;
 }
 
 .option-btn:hover {
@@ -126,9 +90,6 @@ h1 {
   color: white;
 }
 
-/* ===============================
-   ゲージ
-=============================== */
 #bar {
   width: 90%;
   height: 18px;
@@ -145,9 +106,6 @@ h1 {
   transition: width 0.4s ease;
 }
 
-/* ===============================
-   戻るボタン
-=============================== */
 #back-btn {
   position: fixed;
   bottom: 15px;
@@ -161,9 +119,6 @@ h1 {
   cursor: pointer;
 }
 
-/* ===============================
-   結果カード（フェードイン）
-=============================== */
 .result-card {
   background: white;
   border-radius: 15px;
@@ -212,9 +167,6 @@ h1 {
 <div id="result"></div>
 
 <script>
-/* ===============================
-   質問セット（固定）
-=============================== */
 let questions = [
   {
     text: "主食は？",
@@ -308,10 +260,8 @@ let questions = [
 let db = [];
 let index = 0;
 let answers = {};
+let isFinished = false;
 
-/* ===============================
-   JSON 読み込み
-=============================== */
 fetch("menu.json")
   .then(res => res.json())
   .then(data => {
@@ -319,19 +269,13 @@ fetch("menu.json")
     showQuestion();
   });
 
-/* ===============================
-   質問表示
-=============================== */
 function showQuestion() {
   const q = questions[index];
 
-  // 条件付き質問（肉）
-  if (q.condition) {
-    if (answers["食材タイプ"] !== q.condition) {
-      index++;
-      showQuestion();
-      return;
-    }
+  if (q.condition && answers["食材タイプ"] !== q.condition) {
+    index++;
+    showQuestion();
+    return;
   }
 
   document.getElementById("question").innerText = q.text;
@@ -342,14 +286,10 @@ function showQuestion() {
   });
 
   document.getElementById("options").innerHTML = html;
-
   document.getElementById("bar-inner").style.width =
     ((index) / questions.length) * 100 + "%";
 }
 
-/* ===============================
-   回答処理
-=============================== */
 function selectAnswer(value) {
   const q = questions[index];
   answers[q.key] = value;
@@ -360,10 +300,21 @@ function selectAnswer(value) {
   else showQuestion();
 }
 
-/* ===============================
-   戻る
-=============================== */
 function goBack() {
+  if (isFinished) {
+    isFinished = false;
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("question-card").style.display = "block";
+    document.getElementById("bar").style.display = "block";
+
+    index = questions.length - 1;
+    const lastKey = questions[index].key;
+    delete answers[lastKey];
+
+    showQuestion();
+    return;
+  }
+
   if (index === 0) return;
 
   index--;
@@ -373,18 +324,16 @@ function goBack() {
   showQuestion();
 }
 
-/* ===============================
-   最初から
-=============================== */
 function resetAll() {
   index = 0;
   answers = {};
+  isFinished = false;
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("question-card").style.display = "block";
+  document.getElementById("bar").style.display = "block";
   showQuestion();
 }
 
-/* ===============================
-   結果
-=============================== */
 function finish() {
   let filtered = [...db];
 
@@ -408,7 +357,9 @@ function finish() {
 
   if (allMaterials.length > 0) {
     filtered = filtered.filter(item =>
-      item["主な材料"].some(mat => allMaterials.includes(mat))
+      item["主な材料"].some(mat =>
+        allMaterials.some(m => mat.includes(m))
+      )
     );
   }
 
@@ -431,14 +382,12 @@ function finish() {
 
   document.getElementById("question-card").style.display = "none";
   document.getElementById("bar").style.display = "none";
-  document.getElementById("back-btn").style.display = "none";
 
   document.getElementById("result").innerHTML = html;
+
+  isFinished = true;
 }
 
-/* ===============================
-   お気に入り保存
-=============================== */
 function saveMenu(name, link) {
   let saved = JSON.parse(localStorage.getItem("savedMenus") || "[]");
 
