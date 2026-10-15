@@ -262,11 +262,17 @@ function chooseDiverse(entries){
 function finish(){
  const valid=db.filter(item=>item&&item["メニュー名"]);
  if(!valid.length){showError("料理データが空か、読み込めませんでした。menu.json の内容を確認してください。");return;}
- let candidates=valid.filter(item=>matchesHardCriteria(item));
+ const strictCandidates=valid.filter(item=>matchesHardCriteria(item));
+ let candidates=strictCandidates;
  relaxedGenre=false;
- if(!candidates.length&&answers["ジャンル"]){
-  candidates=valid.filter(item=>matchesHardCriteria(item,{ignoreGenre:true}));
-  relaxedGenre=candidates.length>0;
+ // ジャンルを含めて3品そろわない場合だけジャンル条件を広げる。
+ // 主食・食材タイプ・肉の種類・調理時間は一切緩めない。
+ if(answers["ジャンル"]&&strictCandidates.length<3){
+  const expanded=valid.filter(item=>matchesHardCriteria(item,{ignoreGenre:true}));
+  if(expanded.length>strictCandidates.length){
+   candidates=expanded;
+   relaxedGenre=true;
+  }
  }
  if(!candidates.length){
   $("question-card").style.display="block";$("result").replaceChildren();
