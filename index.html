@@ -241,6 +241,51 @@ body.diagnosis-active .footer-small{display:none}
  body.diagnosis-active .actions button{font-size:10px}
 }
 
+
+/* Richer landing page: confident typography, clear discovery stats */
+body:not(.diagnosis-active) .hero{min-height:405px;gap:clamp(24px,4vw,50px);padding:clamp(28px,4.8vw,53px);background:#eaf3e7;border-color:#d3e3cf}
+body:not(.diagnosis-active) .hero-copy{max-width:510px}
+body:not(.diagnosis-active) .hero .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid #c9dfc5;background:#f7fbf4;color:#3e7148;font-size:10px;font-weight:800;letter-spacing:.12em}
+.hero-live-dot{width:7px;height:7px;border-radius:50%;background:#4e9658;box-shadow:0 0 0 3px #deedda}
+body:not(.diagnosis-active) .hero h1{margin:19px 0 13px;font-size:clamp(32px,4.2vw,49px);line-height:1.42;letter-spacing:-.055em}
+body:not(.diagnosis-active) .hero h1 em{display:inline-block;color:#267044;font-style:normal}
+body:not(.diagnosis-active) .hero .hero-lead{font-size:14px;line-height:2;color:#586f5c}
+.hero-countline{display:flex;align-items:center;gap:13px;margin:22px 0 15px;padding:12px 15px;border:1px solid #cfe1c9;border-radius:12px;background:#f8fbf5;max-width:310px}
+.hero-count-number{font-size:36px;line-height:1;font-weight:900;letter-spacing:-.06em;color:#2d7947;font-variant-numeric:tabular-nums}
+.hero-count-copy{font-size:11px;line-height:1.65;color:#647965}
+.hero-count-copy strong{font-size:12px;color:#315a3a}
+.hero-highlights{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0 0}
+.hero-highlights span{display:inline-flex;align-items:center;padding:7px 9px;border:1px solid #d5e4d1;border-radius:7px;background:#f6faf3;color:#4b6a4d;font-size:10px;font-weight:700;line-height:1.4}
+body:not(.diagnosis-active) .hero-cta{margin-top:18px;min-height:50px;padding:14px 19px;border-radius:9px;gap:28px;font-size:13px;box-shadow:0 4px 0 #235e39}
+body:not(.diagnosis-active) .hero-cta:hover{box-shadow:0 2px 0 #235e39}
+body:not(.diagnosis-active) .hero-note{font-size:10px;color:#718673}
+body:not(.diagnosis-active) .hero-visual{min-height:300px}
+body:not(.diagnosis-active) .hero-photo-frame{width:min(100%,455px);aspect-ratio:1.04;border-radius:22px;border-width:6px;box-shadow:0 12px 25px rgba(38,74,44,.14)}
+body:not(.diagnosis-active) .hero-stamp{left:-8px;bottom:0;padding:12px 15px;font-size:11px}
+@media(max-width:820px){
+ body:not(.diagnosis-active) .hero{min-height:350px;padding:26px 22px;gap:16px}
+ body:not(.diagnosis-active) .hero h1{font-size:clamp(30px,4.4vw,40px)}
+ .hero-countline{margin:16px 0 12px;padding:10px 12px}
+ .hero-count-number{font-size:32px}
+ .hero-highlights{gap:5px}
+ .hero-highlights span{font-size:9px;padding:6px 7px}
+}
+@media(max-width:560px){
+ body:not(.diagnosis-active) .hero{padding:23px 18px 17px;gap:0}
+ body:not(.diagnosis-active) .hero h1{font-size:clamp(31px,8vw,39px);line-height:1.42;margin:15px 0 10px}
+ body:not(.diagnosis-active) .hero .hero-lead{font-size:12px;line-height:1.9}
+ .hero-countline{max-width:none;width:max-content;margin:15px 0 11px;padding:9px 12px}
+ .hero-count-number{font-size:31px}
+ .hero-count-copy{font-size:10px}
+ .hero-count-copy strong{font-size:11px}
+ .hero-highlights{gap:5px;margin-top:11px}
+ .hero-highlights span{font-size:9px;padding:6px 7px}
+ body:not(.diagnosis-active) .hero-cta{margin-top:14px;min-height:47px;padding:12px 15px;font-size:12px}
+ body:not(.diagnosis-active) .hero-visual{min-height:190px;margin-top:8px}
+ body:not(.diagnosis-active) .hero-photo-frame{width:88%;aspect-ratio:1.35;border-radius:15px}
+ body:not(.diagnosis-active) .hero-stamp{left:0;padding:8px 10px;font-size:9px}
+}
+
 </style>
 </head>
 <body>
@@ -251,11 +296,13 @@ body.diagnosis-active .footer-small{display:none}
 </header>
 <section class="hero">
  <div class="hero-copy">
-  <span class="eyebrow">FRESH IDEAS FOR EVERYDAY</span>
-  <h1>今日は、<br><em>どんなごはんにする？</em></h1>
-  <p>食べたい気分や好みを選ぶだけ。<br>あなたにぴったりの献立が見つかるサイトです。</p>
-  <a class="hero-cta" href="#mode-picker">🍃 さっそく診断する <span aria-hidden="true">→</span></a>
-  <span class="hero-note">毎日の「何食べよう？」を、ちょっと楽しく。</span>
+  <span class="eyebrow"><span class="hero-live-dot"></span> FIND YOUR NEXT FAVORITE</span>
+  <h1>今日の「食べたい」が、<br><em>きっと見つかる。</em></h1>
+  <p class="hero-lead">和食も洋食も、がっつりごはんも。<br>今の気分から、次のお気に入りを探そう。</p>
+  <div class="hero-countline"><span class="hero-count-number">438</span><span class="hero-count-copy">種類の料理から<br><strong>あなた好みの一皿を発見！</strong></span></div>
+  <div class="hero-highlights"><span>🍚 主食から選べる</span><span>🥬 食材で絞れる</span><span>✨ 新しい料理に出会える</span></div>
+  <a class="hero-cta" href="#mode-picker">献立探しをはじめる <span aria-hidden="true">→</span></a>
+  <span class="hero-note">迷う時間も、ちょっと楽しい食事の時間に。</span>
  </div>
  <div class="hero-visual" aria-label="新鮮な野菜を使った料理のイメージ">
   <div class="hero-photo-frame"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1100&q=85" alt="彩り豊かなサラダボウル" fetchpriority="high"></div>
