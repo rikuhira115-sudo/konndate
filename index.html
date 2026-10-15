@@ -119,13 +119,13 @@ const ingredientGroups = [
  {label:"🥔 いも類",name:"いも類",keywords:["じゃがいも","さつまいも","芋","ポテト"]}
 ];
 const questions = [
- {text:"今日はどんな形のごはん？",hint:"食べたいスタイルを選んでね。迷ったら「おまかせ」でOK。",key:"主食",options:[
+ {text:"主食は何がいい？",hint:"ごはん・麺・パンなど、食べたいものを選んでね。迷ったら「おまかせ」でOK。",key:"主食",options:[
   {label:"🍚 ごはん・丼・カレー",value:"米"},{label:"🍜 麺料理",value:"麺"},{label:"🥪 パン・サンド",value:"パン"},{label:"🍳 おかず中心",value:"なし"},{label:"✨ おまかせ",value:""}
  ]},
- {text:"どんなジャンルが食べたい？",hint:"ジャンルは優先条件として使い、合う料理を探します。",key:"ジャンル",options:[
+ {text:"どんな料理が食べたい？",hint:"和食・洋食・中華など、いつもの気分で選んでね。",key:"ジャンル",options:[
   {label:"🍱 和食",value:"和"},{label:"🍝 洋食",value:"洋"},{label:"🥟 中華",value:"中"},{label:"🌶️ 韓国・アジア料理",value:"__asia__"},{label:"✨ おまかせ",value:""}
  ]},
- {text:"メインにしたい食材は？",hint:"ここで選んだ食材タイプに合わない料理は候補から外します。",key:"食材タイプ",options:[
+ {text:"何をメインに食べたい？",hint:"選んだ食材を使った料理を優先して探すよ。",key:"食材タイプ",options:[
   {label:"🥩 肉料理",value:"肉"},{label:"🐟 魚介料理",value:"魚介"},{label:"🥬 野菜・卵・豆腐中心",value:"野菜など"},{label:"✨ こだわらない",value:"どちらでも"}
  ]},
  {text:"どのお肉が食べたい？",hint:"選んだ種類が主な材料に入っている料理を候補にします。",key:"肉の種類",condition:{key:"食材タイプ",value:"肉"},options:[
@@ -134,17 +134,17 @@ const questions = [
  {text:"入っているとうれしい食材は？",hint:"複数選べます。ここで選んだ食材は候補の順位に反映します。",key:"肉以外の材料",multi:true,options:
   ingredientGroups.map(g=>({label:g.label,value:g.keywords})).concat([{label:"✨ こだわらない",value:[]}])
  },
- {text:"今日はどんな味がいい？",hint:"いつもの定番の味から、ピリ辛やクリーミーまで。",key:"味の特徴",options:[
-  {label:"🍯 甘辛・しょうゆ",value:["甘辛","醤油味"]},{label:"🌶️ ピリ辛・スパイシー",value:["辛い","スパイシー"]},{label:"🍃 あっさり・塩味",value:["塩味"]},{label:"🧀 クリーミー",value:["クリーミー"]},{label:"🥢 みそ味",value:["味噌味"]},{label:"✨ おまかせ",value:[]}
+ {text:"どんな味が食べたい？",hint:"味の名前だけだと迷う人向けに、具体的な言葉にしたよ。わからなければ「おまかせ」でOK。",key:"味の特徴",options:[
+  {label:"🍯 しょうゆ・甘辛味",value:["甘辛","醤油味"]},{label:"🌶️ ピリ辛",value:["辛い","スパイシー"]},{label:"🧂 塩味",value:["塩味"]},{label:"🧀 牛乳・チーズを使った料理",value:["クリーミー"]},{label:"🥢 みそ味",value:["味噌味"]},{label:"✨ おまかせ",value:[]}
  ]},
- {text:"ボリュームはどれくらい？",hint:"軽め・普通・しっかり食べたい、今の気分で。",key:"ボリューム",options:[
-  {label:"🌱 軽め",value:"軽い"},{label:"🙂 ほどよく",value:"普通"},{label:"💪 がっつり",value:"重い"},{label:"✨ おまかせ",value:""}
+ {text:"どれくらい食べたい？",hint:"今のお腹のすき具合で選んでね。",key:"ボリューム",options:[
+  {label:"🌱 少なめ・軽め",value:"軽い"},{label:"🙂 ふつう",value:"普通"},{label:"💪 しっかり食べたい",value:"重い"},{label:"✨ おまかせ",value:""}
  ]},
  {text:"調理にかけられる時間は？",hint:"時間を決めると、その時間以内の料理だけに絞り込みます。",key:"調理時間(分)",options:[
   {label:"⚡ 15分以内",value:15},{label:"⏱️ 30分以内",value:30},{label:"🍳 45分以内",value:45},{label:"✨ 時間は気にしない",value:999}
  ]},
- {text:"予算の気分は？",hint:"価格は材料から見た目安です。予算は候補の順位に反映します。",key:"予算帯",options:[
-  {label:"🪙 できるだけ節約",value:"低"},{label:"🛒 いつもどおり",value:"中"},{label:"🍽️ 少し豪華に",value:"高"},{label:"✨ おまかせ",value:""}
+ {text:"食費はどれくらいにしたい？",hint:"材料費の目安で選んでね。",key:"予算帯",options:[
+  {label:"🪙 なるべく安く",value:"低"},{label:"🛒 ふつう",value:"中"},{label:"🍽️ 今日は少し豪華に",value:"高"},{label:"✨ おまかせ",value:""}
  ]}
 ];
 const quickKeys = ["主食","調理時間(分)","味の特徴"];
