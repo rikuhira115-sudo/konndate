@@ -72,6 +72,13 @@ button{touch-action:manipulation}
 .result-card:focus-within{outline:2px solid #a7bea4;outline-offset:2px}
 .primary-btn:focus-visible,.secondary-btn:focus-visible,.save-btn:focus-visible,.multi-actions button:focus-visible{outline:3px solid #d6a16e;outline-offset:3px}
 @media(max-width:560px){.result-actions{display:grid;grid-template-columns:1fr 1fr}.result-actions button{min-height:46px;padding:12px 14px}.result-actions .history-next-btn{grid-column:1/-1;grid-row:1}.result-actions .history-nav-btn{grid-column:1/-1}.result-intro{padding-top:18px}}
+
+/* Image and interaction finishing touches */
+.photo-fallback{gap:8px;padding:16px;text-align:center}
+.photo-fallback-label{font-size:11px;color:#667366}
+.option-btn{overflow-wrap:anywhere}
+button:disabled{cursor:not-allowed}
+@media(max-width:560px){.option-btn{font-size:14px}.multi-actions button{min-height:44px}.result-card .save-btn{min-height:44px}}
 </style>
 </head>
 <body>
@@ -422,7 +429,9 @@ function photoFor(item){
  const tags=item["画像検索語"];
  if(tags){
   const lock=Array.from(String(item["メニュー名"])).reduce((n,ch)=>(n*31+ch.charCodeAt(0))>>>0,17);
-  return {url:"https://loremflickr.com/800/560/"+encodeURIComponent(String(tags).replace(/,/g,","))+"?lock="+lock,page:"https://www.loremflickr.com/",fallback:fallback.url};
+  // LoremFlickr uses comma-separated keywords in the URL path.
+  const safeTags=String(tags).toLowerCase().replace(/[^a-z0-9,-]/g,"").replace(/,+/g,",").replace(/^,|,$/g,"");
+  if(safeTags)return {url:"https://loremflickr.com/800/560/"+safeTags+"?lock="+lock,page:"https://loremflickr.com/",fallback:fallback.url};
  }
  return fallback;
 }
@@ -474,9 +483,9 @@ function renderResults(picked){
   const selectedPhoto=photoFor(item);
   const img=document.createElement("img");img.src=selectedPhoto.url;img.alt=item["メニュー名"]+"のイメージ写真";img.loading="lazy";img.decoding="async";
   const photoLabel=document.createElement("span");photoLabel.className="photo-caption";photoLabel.textContent="イメージ写真";
-  const photoCredit=document.createElement("a");photoCredit.className="photo-credit";photoCredit.textContent="出典: Unsplash ↗";photoCredit.href=selectedPhoto.page||"https://unsplash.com/";photoCredit.target="_blank";photoCredit.rel="noopener noreferrer";
+  const photoCredit=document.createElement("a");photoCredit.className="photo-credit";photoCredit.textContent=selectedPhoto.page&&selectedPhoto.page.includes("loremflickr")?"画像情報 ↗":"出典: Unsplash ↗";photoCredit.href=selectedPhoto.page||"https://unsplash.com/";photoCredit.target="_blank";photoCredit.rel="noopener noreferrer";
   if(!selectedPhoto.page)photoCredit.style.display="none";
-  img.onerror=()=>{if(selectedPhoto.fallback&&img.dataset.fallbackTried!=="1"){img.dataset.fallbackTried="1";img.src=selectedPhoto.fallback;photoCredit.href="https://unsplash.com/";photoCredit.textContent="出典: Unsplash ↗";return;}img.remove();photoCredit.remove();photo.classList.add("photo-fallback");const emoji=document.createElement("span");emoji.className="photo-emoji";emoji.textContent=imageEmoji(item);photo.appendChild(emoji);};
+  img.onerror=()=>{if(selectedPhoto.fallback&&img.dataset.fallbackTried!=="1"){img.dataset.fallbackTried="1";img.src=selectedPhoto.fallback;photoCredit.href="https://unsplash.com/";photoCredit.textContent="出典: Unsplash ↗";return;}img.remove();photoCredit.remove();photo.classList.add("photo-fallback");const emoji=document.createElement("span");emoji.className="photo-emoji";emoji.textContent=imageEmoji(item);photo.appendChild(emoji);const fallbackText=document.createElement("span");fallbackText.className="photo-fallback-label";fallbackText.textContent="写真を読み込めませんでした";photo.appendChild(fallbackText);};
   photo.append(img,photoLabel);if(selectedPhoto.page)photo.appendChild(photoCredit);
   const body=document.createElement("div");body.className="result-card-body";
   const rank=document.createElement("span");rank.className="rank";rank.textContent=String(i+1).padStart(2,"0");
