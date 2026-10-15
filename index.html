@@ -51,6 +51,16 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;ma
  .nav-mode-btn{font-size:11px;padding:10px}
 }
 
+
+.result-history-label{text-align:center;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--green);margin:-4px 0 18px}
+.history-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:620px;margin:24px auto}
+.history-actions button{min-height:48px;padding:12px 16px}
+.history-nav-btn{background:#fff;border:1px solid #cfdcc9;color:var(--green-dark);font-weight:800}
+.history-nav-btn:not(:disabled):hover{background:var(--mint);border-color:#a8bba6}
+.history-nav-btn:disabled{opacity:.42;cursor:not-allowed}
+.history-next-btn:disabled{background:#e5e9e0;color:#7c867a;box-shadow:none;cursor:not-allowed}
+@media(max-width:560px){.history-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.history-actions button{font-size:12px;min-height:48px;padding:10px 8px}.result-history-label{margin-bottom:14px}}
+
 </style>
 </head>
 <body>
@@ -145,7 +155,7 @@ const photoSources = {
  meat:{url:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80"},
  general:{url:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80"}
 };
-let db=[],index=0,answers={},isFinished=false,lastResults=[],allRanked=[],shownNames=new Set(),currentMode=null,currentQuestions=[],multiDraft=new Set(),relaxedGenre=false;
+let db=[],index=0,answers={},isFinished=false,lastResults=[],allRanked=[],shownNames=new Set(),currentMode=null,currentQuestions=[],multiDraft=new Set(),relaxedGenre=false,resultHistory=[],resultHistoryIndex=-1;
 const $=id=>document.getElementById(id);
 function normalizeArray(v){return Array.isArray(v)?v:(v==null?[]:[v]);}
 function hasAny(materials,keywords){return keywords.some(k=>materials.some(m=>String(m).includes(k)));}
@@ -167,13 +177,13 @@ function genreMatches(item,selected){
 function setMode(mode){
  currentMode=mode;
  currentQuestions=mode==="quick"?quickKeys.map(key=>questions.find(q=>q.key===key)).filter(Boolean):questions.slice();
- index=0;answers={};lastResults=[];allRanked=[];shownNames=new Set();multiDraft=new Set();relaxedGenre=false;
+ index=0;answers={};lastResults=[];allRanked=[];shownNames=new Set();multiDraft=new Set();relaxedGenre=false;resultHistory=[];resultHistoryIndex=-1;
  $("mode-picker").style.display="none";$("question-card").style.display="block";$("result").replaceChildren();
  $("small-note").textContent=mode==="quick"?"かんたん診断は3問で完了。気分に近いものを選んでね。":"ジャンルや食材、時間、予算まで細かく選べます。";
  renderQuestion();window.scrollTo({top:0,behavior:"smooth"});
 }
 function returnToModes(){
- currentMode=null;currentQuestions=[];index=0;answers={};lastResults=[];allRanked=[];shownNames=new Set();multiDraft=new Set();relaxedGenre=false;
+ currentMode=null;currentQuestions=[];index=0;answers={};lastResults=[];allRanked=[];shownNames=new Set();multiDraft=new Set();relaxedGenre=false;resultHistory=[];resultHistoryIndex=-1;resultHistory=[];resultHistoryIndex=-1;
  $("question-card").style.display="none";$("result").replaceChildren();$("mode-picker").style.display="block";$("bar-inner").style.width="0";
  $("small-note").textContent="答えに正解はありません。今の気分で選んでね。";window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -240,7 +250,7 @@ function goBack(){
 }
 function resetAll(){
  if(!currentMode){returnToModes();return;}
- index=0;answers={};isFinished=false;lastResults=[];allRanked=[];shownNames=new Set();multiDraft=new Set();relaxedGenre=false;
+ index=0;answers={};isFinished=false;lastResults=[];allRanked=[];shownNames=new Set();multiDraft=new Set();relaxedGenre=false;resultHistory=[];resultHistoryIndex=-1;
  $("result").replaceChildren();$("question-card").style.display="block";renderQuestion();window.scrollTo({top:0,behavior:"smooth"});
 }
 function selectedIngredientGroups(){
@@ -366,6 +376,7 @@ function finish(){
  allRanked=shuffleTied(candidates.map((item,order)=>({item,score:scoreItem(item),order})));
  if(relaxedGenre)allRanked.sort((a,b)=>Number(genreMatches(b.item,answers["ジャンル"]))-Number(genreMatches(a.item,answers["ジャンル"]))||b.score-a.score);
  const picked=chooseDiverse(allRanked);
+ resultHistory=[picked];resultHistoryIndex=0;
  lastResults=picked.map(x=>x.item);shownNames=new Set(lastResults.map(x=>x["メニュー名"]));isFinished=true;
  renderResults(picked);
 }
@@ -431,6 +442,9 @@ function renderResults(picked){
  const root=$("result");root.replaceChildren();$("question-card").style.display="none";
  const intro=document.createElement("div");intro.className="result-intro";
  intro.innerHTML='<div class="result-kicker">TODAY’S MENU</div><h2>今日のおすすめ、'+picked.length+'品。</h2><p>まず主食・食材・調理時間の条件を守り、その中から好みや予算に合う料理を選びました。</p>';root.appendChild(intro);
+ const historyLabel=document.createElement("p");historyLabel.className="result-history-label";
+ historyLabel.textContent="候補セット "+(resultHistoryIndex+1)+" / "+Math.max(resultHistory.length,1);
+ root.appendChild(historyLabel);
  if(relaxedGenre){
   const note=document.createElement("p");note.className="result-note";note.textContent="選んだジャンルだけでは3品そろわなかったため、主食・食材・調理時間の条件を守りつつ、別ジャンルの料理も含めました。";root.appendChild(note);
  }
@@ -463,23 +477,45 @@ function renderResults(picked){
   body.append(rank,title,meta,reasonTitle,reasonList,link,save);card.append(photo,body);grid.appendChild(card);
  });
  root.appendChild(grid);
- const actions=document.createElement("div");actions.className="result-actions";
- const another=document.createElement("button");another.className="primary-btn";another.textContent="別の候補を見る ↻";another.disabled=allRanked.length<=picked.length;another.onclick=showAnotherSet;
+ const actions=document.createElement("div");actions.className="result-actions history-actions";
+ const previous=document.createElement("button");previous.className="secondary-btn history-nav-btn";previous.textContent="← 前の候補";
+ previous.disabled=resultHistoryIndex<=0;previous.onclick=showPreviousSet;
+ const next=document.createElement("button");next.className="primary-btn history-next-btn";
+ const hasNextHistory=resultHistoryIndex<resultHistory.length-1;
+ const hasUnseen=allRanked.some(x=>!shownNames.has(x.item["メニュー名"]));
+ next.textContent=hasNextHistory?"次の候補 →":hasUnseen?"別の候補を見る ↻":"候補は全部表示済み";
+ next.disabled=!hasNextHistory&&!hasUnseen;next.onclick=showAnotherSet;
  const again=document.createElement("button");again.className="secondary-btn";again.textContent="回答を変える";again.onclick=resetAll;
  const edit=document.createElement("button");edit.className="secondary-btn";edit.textContent="条件を少し変える ←";edit.onclick=editLastAnswer;
- actions.append(another,again,edit);root.appendChild(actions);
+ actions.append(previous,next,again,edit);root.appendChild(actions);
  $("bar-inner").style.width="100%";window.scrollTo({top:0,behavior:"smooth"});
+}
+function showPreviousSet(){
+ if(resultHistoryIndex<=0)return;
+ resultHistoryIndex--;
+ const picked=resultHistory[resultHistoryIndex];
+ lastResults=picked.map(x=>x.item);
+ renderResults(picked);
 }
 function showAnotherSet(){
  if(!allRanked.length)return;
- let available=allRanked.filter(x=>!shownNames.has(x.item["メニュー名"]));
- if(!available.length){
-  const note=$("result").querySelector(".result-note");
-  if(note)note.textContent="この条件に合う料理は"+allRanked.length+"種類で、ほかの候補はありません。食材や時間を変えると新しい料理が見つかるよ。";
-  else{const n=document.createElement("p");n.className="result-note";n.textContent="この条件に合う料理は"+allRanked.length+"種類で、ほかの候補はありません。食材や時間を変えると新しい料理が見つかるよ。";$("result").insertBefore(n,$("result").querySelector(".result-grid"));}
+ // 以前に表示したセットがあれば、まず履歴の次へ進む。
+ if(resultHistoryIndex<resultHistory.length-1){
+  resultHistoryIndex++;
+  const picked=resultHistory[resultHistoryIndex];
+  lastResults=picked.map(x=>x.item);
+  renderResults(picked);
   return;
  }
- const picked=chooseDiverse(available);lastResults=picked.map(x=>x.item);picked.forEach(x=>shownNames.add(x.item["メニュー名"]));renderResults(picked);
+ const available=allRanked.filter(x=>!shownNames.has(x.item["メニュー名"]));
+ if(!available.length)return;
+ const picked=chooseDiverse(available);
+ if(!picked.length)return;
+ resultHistory.push(picked);
+ resultHistoryIndex=resultHistory.length-1;
+ lastResults=picked.map(x=>x.item);
+ picked.forEach(x=>shownNames.add(x.item["メニュー名"]));
+ renderResults(picked);
 }
 function editLastAnswer(){
  $("question-card").style.display="block";
