@@ -31,6 +31,26 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;ma
 @media(max-width:680px){.result-grid{grid-template-columns:1fr}.result-card{display:grid;grid-template-columns:minmax(105px,35%) minmax(0,1fr);align-items:stretch}.food-photo{height:100%;min-height:220px;border-radius:0}.result-card-body{padding:16px 14px}.result-card h3{font-size:18px}.result-card a.recipe{font-size:11px}.reason-chip{font-size:9px}.mode-grid{grid-template-columns:1fr}.mode-card{padding:19px}.mode-icon{display:inline-block;vertical-align:middle;margin:0 9px 0 0}.mode-card strong{display:inline-block}.mode-card em{margin-top:8px}}
 @media(max-width:420px){.result-card{grid-template-columns:1fr}.food-photo{height:150px;min-height:150px}.result-card-body{padding:17px}.result-card .save-btn{max-width:none}.multi-actions button{flex:1}}
 
+
+/* Clear, touch-friendly navigation controls */
+.actions{align-items:center;flex-wrap:wrap}
+.nav-back-btn{background:var(--mint);border:1px solid #b9cbb7;color:var(--green-dark);font-weight:800;min-height:46px;min-width:112px;padding:12px 18px;box-shadow:0 3px 10px #294c3710}
+.nav-back-btn:disabled{opacity:.55;background:#edf0e9;border-color:#e0e5dc;color:#7b877a;box-shadow:none}
+.nav-mode-btn{background:#fff;border:1px solid #d5dfd1;color:var(--green-dark);font-weight:700;min-height:44px}
+.nav-reset-btn{background:transparent;border:1px solid var(--line);color:var(--muted);min-height:44px}
+.nav-back-btn:not(:disabled):hover,.nav-mode-btn:hover{background:#dce9d9;border-color:#a7bea4}
+.nav-back-btn:focus-visible,.nav-mode-btn:focus-visible,.nav-reset-btn:focus-visible{outline:3px solid #d6a16e;outline-offset:3px}
+.food-photo img{transition:transform .25s ease}
+.result-card:hover .food-photo img{transform:scale(1.025)}
+.photo-credit{position:absolute;left:9px;bottom:8px;z-index:2;background:#15251dcc;color:#fff;text-decoration:none;border-radius:999px;padding:4px 7px;font-size:9px;letter-spacing:.01em}
+.photo-credit:hover{text-decoration:underline}
+@media(max-width:560px){
+ .actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px;margin-top:18px}
+ .nav-back-btn,.nav-mode-btn{width:100%;min-width:0;min-height:48px}
+ .nav-reset-btn{grid-column:1/-1;justify-self:center;min-height:42px}
+ .nav-mode-btn{font-size:11px;padding:10px}
+}
+
 </style>
 </head>
 <body>
@@ -53,7 +73,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;ma
 <div class="progress" aria-label="診断の進み具合"><div class="progress-inner" id="bar-inner"></div></div>
 <h2 id="question">献立データを読み込んでいます…</h2><p id="hint"></p><div class="options" id="options"></div>
 <div class="multi-actions" id="multi-actions"><button type="button" id="multi-continue">選択した食材で進む →</button><button type="button" id="multi-clear">こだわらない</button></div>
-<div class="actions"><button class="ghost-btn" id="back-btn" type="button" disabled>← 前の質問</button><button class="ghost-btn" id="mode-back-btn" type="button">診断方法を変える</button><button class="ghost-btn" id="reset-btn" type="button">最初から ↻</button></div>
+<div class="actions"><button class="ghost-btn nav-back-btn" id="back-btn" type="button" disabled>← 戻る</button><button class="ghost-btn nav-mode-btn" id="mode-back-btn" type="button">診断方法を選び直す</button><button class="ghost-btn nav-reset-btn" id="reset-btn" type="button">最初から ↻</button></div>
 </section>
 <section id="result" aria-live="polite"></section>
 </main>
@@ -101,13 +121,29 @@ const questions = [
 ];
 const quickKeys = ["主食","調理時間(分)","味の特徴"];
 const photoSources = {
- noodles:"https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1000&q=80",
- asian:"https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=1000&q=80",
- bowl:"https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1000&q=80",
- greens:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1000&q=80",
- soup:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=80",
- meat:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80",
- general:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80"
+ gyudon:{url:"https://images.unsplash.com/photo-1682566509547-5961bc5ea394?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/a-plate-of-food-with-rice-and-meat-lbaUoloKooI"},
+ katsudon:{url:"https://images.unsplash.com/photo-1765510295901-3aa756cc1471?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/katsudon-served-in-a-blue-and-white-bowl-QercEMbK7Ak"},
+ chickenRice:{url:"https://images.unsplash.com/photo-1763627719029-d7122ae87e8f?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/fried-chicken-and-egg-over-rice-with-scallions-poZ2O8B5KBQ"},
+ curry:{url:"https://images.unsplash.com/photo-1753501183108-bcbac649992d?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/japanese-curry-rice-served-with-a-side-salad-VHUFBT6-RVU"},
+ katsuCurry:{url:"https://images.unsplash.com/photo-1784955725783-76d170a05619?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/japanese-katsu-curry-with-rice-on-a-dark-plate-4yTD16MMnFo"},
+ hamburger:{url:"https://images.unsplash.com/photo-1757822788140-00b683496ddd?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/hamburger-steak-with-rice-and-side-dishes-nHw7TynYoUM"},
+ omurice:{url:"https://images.unsplash.com/photo-1743148509702-2198b23ede1c?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/omelet-with-sides-and-soup-ready-to-eat-TdtoE7BE3z8"},
+ ramen:{url:"https://images.unsplash.com/photo-1746431565519-4352675bd721?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/delicious-japanese-ramen-in-a-bowl-79GiwAUmAOY"},
+ carbonara:{url:"https://images.unsplash.com/photo-1588013273468-315fd88ea34c?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/pasta-dish-on-white-ceramic-plate--5FECW242og"},
+ pasta:{url:"https://images.unsplash.com/photo-1579504673016-d0a8ade60777?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/pasta-dish-on-white-ceramic-plate-Amxb2pkUXFE"},
+ udon:{url:"https://images.unsplash.com/photo-1763905145546-60bacfea6c9f?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/udon-noodles-with-beef-and-tempura-toppings-eVG2SfK23qc"},
+ soba:{url:"https://images.unsplash.com/photo-1758945185414-d9e08cb60baf?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/soba-noodles-with-seaweed-and-tempura-qoCyDHOTQCM"},
+ gyoza:{url:"https://images.unsplash.com/photo-1768326119773-05cae29f4106?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/golden-pan-fried-dumplings-on-a-banana-leaf-with-garnish-1obbVYT6BYU"},
+ tempura:{url:"https://images.unsplash.com/photo-1535924571710-4c6e27716b6d?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/tempura-set-paMbZ0iNka8"},
+ salmon:{url:"https://images.unsplash.com/photo-1747097950921-6e273f14b47f?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/grilled-salmon-dish-beautifully-presented-on-a-plate-OypKlUakK6Q"},
+ friedChicken:{url:"https://images.unsplash.com/photo-1591100622264-4a2605e175a3?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/fried-chicken-on-white-ceramic-plate-7V1PRah-NOc"},
+ sandwich:{url:"https://images.unsplash.com/reserve/jCCsCae7RwCDOKTCA2Ji_reggeli%20-%20sonk%C3%A1s%20szendvics.JPG?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/sandwich-closeup-photo-eQqY_KQOqEE"},
+ salad:{url:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1000&q=80"},
+ soup:{url:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=80"},
+ asian:{url:"https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=1000&q=80"},
+ rice:{url:"https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1000&q=80"},
+ meat:{url:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80"},
+ general:{url:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80"}
 };
 let db=[],index=0,answers={},isFinished=false,lastResults=[],allRanked=[],shownNames=new Set(),currentMode=null,currentQuestions=[],multiDraft=new Set(),relaxedGenre=false;
 const $=id=>document.getElementById(id);
@@ -172,15 +208,25 @@ function renderQuestion(){
  $("back-btn").disabled=visible.indexOf(index)<=0;
  $("question-card").style.display="block";$("result").replaceChildren();isFinished=false;
 }
+function clearAnswersAfterCurrentQuestion(){
+ currentQuestions.slice(index+1).forEach(q=>{delete answers[q.key];});
+}
 function confirmMulti(){
  const q=currentQuestions[index];if(!q||!q.multi)return;
  const selected=q.options.filter(opt=>multiDraft.has(opt.label)).flatMap(opt=>opt.value);
- answers[q.key]=[...new Set(selected)];advanceQuestion();
+ answers[q.key]=[...new Set(selected)];clearAnswersAfterCurrentQuestion();advanceQuestion();
 }
 function selectAnswer(value){
  const q=currentQuestions[index];answers[q.key]=Array.isArray(value)?value.slice():value;
+ clearAnswersAfterCurrentQuestion();
  questions.forEach(item=>{if(item.condition&&!questionVisible(item,answers))delete answers[item.key];});
  advanceQuestion();
+}
+function revisitQuestion(key){
+ const pos=currentQuestions.findIndex(q=>q.key===key);
+ if(pos<0){resetAll();return;}
+ currentQuestions.slice(pos).forEach(q=>{delete answers[q.key];});
+ index=pos;renderQuestion();window.scrollTo({top:0,behavior:"smooth"});
 }
 function advanceQuestion(){
  const visible=visibleQuestionIndexes(),pos=visible.indexOf(index);
@@ -200,6 +246,11 @@ function resetAll(){
 function selectedIngredientGroups(){
  const selected=normalizeArray(answers["肉以外の材料"]);
  return ingredientGroups.filter(group=>group.keywords.some(k=>selected.includes(k)));
+}
+function matchesTastePreference(item){
+ const selected=normalizeArray(answers["味の特徴"]).filter(Boolean);
+ if(!selected.length)return true;
+ return hasAny(normalizeArray(item["味の特徴"]).map(String),selected);
 }
 function matchesHardCriteria(item,options={}){
  const a=answers,mats=normalizeArray(item["主な材料"]).map(String);
@@ -284,24 +335,30 @@ function finish(){
  const valid=db.filter(item=>item&&item["メニュー名"]);
  if(!valid.length){showError("料理データが空か、読み込めませんでした。menu.json の内容を確認してください。");return;}
  const strictCandidates=valid.filter(item=>matchesHardCriteria(item));
- let candidates=strictCandidates;
+ let candidates=strictCandidates.filter(matchesTastePreference);
  relaxedGenre=false;
  // ジャンルを含めて3品そろわない場合だけジャンル条件を広げる。
- // 主食・食材タイプ・肉の種類・調理時間は一切緩めない。
- if(answers["ジャンル"]&&strictCandidates.length<3){
-  const expanded=valid.filter(item=>matchesHardCriteria(item,{ignoreGenre:true}));
-  if(expanded.length>strictCandidates.length){
+ // 主食・食材タイプ・肉の種類・調理時間・選んだ味の特徴は緩めない。
+ if(answers["ジャンル"]&&candidates.length<3){
+  const expanded=valid.filter(item=>matchesHardCriteria(item,{ignoreGenre:true})&&matchesTastePreference(item));
+  if(expanded.length>candidates.length){
    candidates=expanded;
    relaxedGenre=true;
   }
  }
  if(!candidates.length){
+  const selectedTaste=normalizeArray(answers["味の特徴"]).filter(Boolean);
   $("question-card").style.display="block";$("result").replaceChildren();
-  $("question").textContent="条件に合う料理が見つかりませんでした";
-  $("hint").textContent="選んだ主食・食材・調理時間の条件は守っています。条件を少し広げてみてね。";
+  $("question").textContent=selectedTaste.length&&strictCandidates.length?"選んだ味に合う料理が見つかりませんでした":"条件に合う料理が見つかりませんでした";
+  $("hint").textContent=selectedTaste.length&&strictCandidates.length
+   ?"ほかの味の料理を間違って出さないようにしています。味の好みを選び直すか、条件を変えてみてね。"
+   :"選んだ主食・食材・調理時間の条件は守っています。条件を少し広げてみてね。";
   $("options").replaceChildren();
   const actions=document.createElement("div");actions.className="result-actions";
-  const back=document.createElement("button");back.className="primary-btn";back.textContent="最後の条件を変える";
+  if(selectedTaste.length){
+   const tasteBack=document.createElement("button");tasteBack.className="primary-btn";tasteBack.textContent="味の好みを選び直す";tasteBack.onclick=()=>revisitQuestion("味の特徴");actions.appendChild(tasteBack);
+  }
+  const back=document.createElement("button");back.className="secondary-btn";back.textContent="最後の条件を変える";
   back.onclick=()=>{const visible=visibleQuestionIndexes();index=visible[visible.length-1]??0;delete answers[currentQuestions[index]?.key];renderQuestion();};
   const restart=document.createElement("button");restart.className="secondary-btn";restart.textContent="最初から";restart.onclick=resetAll;
   actions.append(back,restart);$("options").appendChild(actions);$("bar-inner").style.width="100%";return;
@@ -312,15 +369,34 @@ function finish(){
  lastResults=picked.map(x=>x.item);shownNames=new Set(lastResults.map(x=>x["メニュー名"]));isFinished=true;
  renderResults(picked);
 }
-function photoUrl(item){
+function photoFor(item){
  const name=item["メニュー名"]||"",category=item["料理カテゴリ"]||"";
- if(/ラーメン|うどん|そば|そうめん|焼きそば|パスタ|ナポリタン|ペペロンチーノ|カルボナーラ|ミートソース|冷やし中華|担々麺/.test(name))return photoSources.noodles;
- if(/餃子|シュウマイ|春巻|エビチリ|エビマヨ|酢豚|青椒肉絲|麻婆豆腐|回鍋肉|八宝菜|かに玉|油淋鶏/.test(name)||category==="中華")return photoSources.asian;
- if(/丼|チャーハン|カレー|オムライス|ドリア|ピラフ|天津飯|ハヤシライス|チキンライス|焼きおにぎり/.test(name)||category==="丼"||category==="ご飯もの")return photoSources.bowl;
- if(/サラダ|野菜|きんぴら|ひじき|豆腐/.test(name)||category==="炒め物")return photoSources.greens;
- if(/スープ|味噌汁|豚汁|シチュー|おでん|ポトフ/.test(name)||category==="スープ"||category==="煮物")return photoSources.soup;
- if(/ハンバーグ|生姜焼き|ステーキ|焼き魚|唐揚げ|とんかつ|焼肉|肉じゃが|チキン南蛮|チキンカツ|鮭のホイル焼き/.test(name)||category==="揚げ物")return photoSources.meat;
- if(category==="パン・軽食")return photoSources.general;
+ // Exact matches for frequently recommended dishes.
+ if(name==="カツ丼")return photoSources.katsudon;
+ if(["牛丼","豚丼","焼肉丼","カルビ丼"].includes(name))return photoSources.gyudon;
+ if(["唐揚げ丼","親子丼","鶏そぼろ丼","三色丼"].includes(name))return photoSources.chickenRice;
+ if(name==="カツカレー")return photoSources.katsuCurry;
+ if(/カレーライス|ビーフカレー|ポークカレー|チキンカレー|キーマカレー|ドライカレー/.test(name))return photoSources.curry;
+ if(name==="オムライス")return photoSources.omurice;
+ if(/ハンバーグ|ロコモコ丼/.test(name))return photoSources.hamburger;
+ if(name==="カルボナーラ")return photoSources.carbonara;
+ if(/パスタ|ナポリタン|ペペロンチーノ|ミートソース|ジェノベーゼ|きのこパスタ|ツナパスタ|納豆パスタ/.test(name))return photoSources.pasta;
+ if(/ラーメン|担々麺/.test(name))return photoSources.ramen;
+ if(/うどん/.test(name))return photoSources.udon;
+ if(/そば/.test(name))return photoSources.soba;
+ if(name==="餃子")return photoSources.gyoza;
+ if(/天ぷら|天丼/.test(name))return photoSources.tempura;
+ if(/鮭|さば|鯖|ぶり|ブリ|ほっけ|ホッケ|アジフライ|白身魚|ムニエル|魚のホイル焼き/.test(name))return photoSources.salmon;
+ if(/唐揚げ|チキン南蛮|チキンカツ|ヤンニョムチキン|油淋鶏|フライ|とんかつ|コロッケ/.test(name))return photoSources.friedChicken;
+ if(/サンド|ホットドッグ/.test(name))return photoSources.sandwich;
+ if(/サラダ/.test(name)||name==="野菜炒め"||name==="豚肉の味噌炒め")return photoSources.salad;
+ if(/スープ|汁|シチュー|おでん|ポトフ|ぶり大根/.test(name)||category==="煮物")return photoSources.soup;
+ if(category==="中華"||["エビマヨ","プルコギ","チャプチェ","スンドゥブチゲ","チーズタッカルビ","キンパ"].includes(name))return photoSources.asian;
+ if(category==="丼"||category==="ご飯もの")return photoSources.rice;
+ if(category==="麺")return photoSources.udon;
+ if(category==="揚げ物")return photoSources.friedChicken;
+ if(category==="パン・軽食")return photoSources.sandwich;
+ if(/ハンバーグ|生姜焼き|ステーキ|肉じゃが|プルコギ|豚バラ大根|ポークソテー|チキンソテー/.test(name))return photoSources.meat;
  return photoSources.general;
 }
 function imageEmoji(item){
@@ -365,8 +441,13 @@ function renderResults(picked){
  picked.forEach((entry,i)=>{
   const item=entry.item,card=document.createElement("article");card.className="result-card";
   const photo=document.createElement("div");photo.className="food-photo";
-  const img=document.createElement("img");img.src=photoUrl(item);img.alt=item["メニュー名"]+"のイメージ写真";img.loading="lazy";img.onerror=()=>{img.remove();photo.classList.add("photo-fallback");const emoji=document.createElement("span");emoji.className="photo-emoji";emoji.textContent=imageEmoji(item);photo.appendChild(emoji);};
-  const photoLabel=document.createElement("span");photoLabel.className="photo-caption";photoLabel.textContent="写真はイメージです";photo.append(img,photoLabel);
+  const selectedPhoto=photoFor(item);
+  const img=document.createElement("img");img.src=selectedPhoto.url;img.alt=item["メニュー名"]+"のイメージ写真";img.loading="lazy";img.decoding="async";
+  const photoLabel=document.createElement("span");photoLabel.className="photo-caption";photoLabel.textContent="イメージ写真";
+  const photoCredit=document.createElement("a");photoCredit.className="photo-credit";photoCredit.textContent="出典: Unsplash ↗";photoCredit.href=selectedPhoto.page||"https://unsplash.com/";photoCredit.target="_blank";photoCredit.rel="noopener noreferrer";
+  if(!selectedPhoto.page)photoCredit.style.display="none";
+  img.onerror=()=>{img.remove();photoCredit.remove();photo.classList.add("photo-fallback");const emoji=document.createElement("span");emoji.className="photo-emoji";emoji.textContent=imageEmoji(item);photo.appendChild(emoji);};
+  photo.append(img,photoLabel);if(selectedPhoto.page)photo.appendChild(photoCredit);
   const body=document.createElement("div");body.className="result-card-body";
   const rank=document.createElement("span");rank.className="rank";rank.textContent=String(i+1).padStart(2,"0");
   const title=document.createElement("h3");title.textContent=item["メニュー名"];
