@@ -127,7 +127,117 @@ header{margin-bottom:44px}
  .mode-card{padding:19px}
 }
 
-</style>
+
+/* Botanical editorial redesign */
+:root{--ink:#234238;--muted:#72877c;--paper:#f4faf5;--card:#fff;--green:#27845d;--green-dark:#176747;--mint:#e4f5e9;--line:#dcebe1;--shadow:0 18px 48px rgba(31,91,62,.08)}
+body{background:radial-gradient(ellipse at 12% 0%,rgba(191,231,201,.4),transparent 30%),radial-gradient(ellipse at 95% 45%,rgba(221,243,225,.55),transparent 28%),linear-gradient(180deg,#f8fcf8 0%,#f0f8f2 100%)}
+.shell{position:relative;isolation:isolate;width:min(100% - 44px,1120px);padding:22px 0 78px}
+.shell>header,.shell>main,.shell>.small-note,.shell>.footer{position:relative;z-index:2}
+header{margin-bottom:26px;padding:10px 14px;border:1px solid rgba(217,235,222,.8);border-radius:22px;background:rgba(255,255,255,.76);backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(31,91,62,.035)}
+.brand-mark{background:linear-gradient(145deg,#7fc893,#27845d);color:#fff;border-radius:16px;box-shadow:0 7px 18px rgba(39,132,93,.2)}
+.brand-mark:before{content:"";position:absolute}
+.brand-name{font-size:19px;color:#345348}
+.brand-sub{letter-spacing:.12em}
+.header-links{align-items:center}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:clamp(18px,4vw,52px);position:relative;overflow:hidden;min-height:350px;margin:0 0 26px;padding:clamp(28px,5vw,58px);border:1px solid rgba(211,234,216,.9);border-radius:34px;background:linear-gradient(112deg,rgba(255,255,255,.97) 4%,rgba(240,250,242,.94) 100%);box-shadow:0 18px 48px rgba(31,91,62,.065)}
+.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 5% 90%,rgba(193,231,201,.38),transparent 34%),radial-gradient(ellipse at 88% 10%,rgba(255,255,255,.82),transparent 30%);pointer-events:none}
+.hero:after{content:"";position:absolute;width:210px;height:210px;right:35%;bottom:-145px;border:1px solid rgba(100,171,124,.22);border-radius:50%;box-shadow:0 0 0 20px rgba(100,171,124,.035),0 0 0 42px rgba(100,171,124,.025);pointer-events:none}
+.hero-copy{position:relative;z-index:2;min-width:0}
+.hero .eyebrow{background:#e5f5e9;border-radius:99px;padding:8px 12px;letter-spacing:.12em;color:#2e865d}
+.hero .eyebrow:before{background:#68b781;width:7px;height:7px;border-radius:50%}
+.hero h1{font-size:clamp(32px,4.4vw,54px);line-height:1.38;letter-spacing:-.055em;margin:18px 0 15px}
+.hero h1 em{color:#288458}
+.hero p{font-size:clamp(13px,1.45vw,15px);line-height:2.05;color:#597568}
+.hero-cta{position:relative;z-index:2;display:inline-flex;align-items:center;gap:24px;margin-top:23px;padding:15px 22px;border-radius:999px;background:linear-gradient(135deg,#55ae79,#21774f);box-shadow:0 10px 23px rgba(39,132,93,.22);color:white;text-decoration:none;font-size:14px;font-weight:800;transition:transform .18s,box-shadow .18s}
+.hero-cta span{font-size:19px;line-height:1}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 13px 27px rgba(39,132,93,.25)}
+.hero-note{display:block;margin-top:15px;color:#89a295;font-size:10px;letter-spacing:.08em}
+.hero-visual{position:relative;z-index:1;min-width:0;min-height:260px;display:grid;place-items:center}
+.hero-photo-frame{width:min(100%,440px);aspect-ratio:1.18;border-radius:47% 53% 45% 55% / 48% 43% 57% 52%;overflow:hidden;transform:rotate(2deg);border:7px solid rgba(255,255,255,.83);box-shadow:0 18px 38px rgba(30,72,48,.16);background:#e2f1e5}
+.hero-photo-frame:after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.5);border-radius:inherit;pointer-events:none}
+.hero-photo-frame img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.03)}
+.hero-leaf-photo{position:absolute;z-index:2;right:-12px;top:-10px;width:clamp(95px,13vw,165px);height:clamp(95px,13vw,165px);object-fit:cover;object-position:35% center;border:5px solid rgba(255,255,255,.9);border-radius:48% 52% 50% 50%;transform:rotate(10deg);box-shadow:0 10px 24px rgba(31,91,62,.12);mix-blend-mode:multiply}
+.hero-stamp{position:absolute;left:-5px;bottom:8px;display:flex;align-items:center;gap:8px;padding:11px 15px;background:rgba(255,255,255,.94);border:1px solid #dcebe1;border-radius:16px;box-shadow:0 9px 22px rgba(31,91,62,.1);color:#4c7560;font-size:11px;line-height:1.7;transform:rotate(-3deg)}
+.hero-stamp span{font-size:22px}
+.step-showcase{display:grid;grid-template-columns:minmax(145px,.86fr) repeat(3,minmax(0,1fr));gap:14px;align-items:stretch;margin:0 0 27px}
+.step-intro{align-self:center;padding:12px 9px 12px 5px}
+.step-intro .eyebrow{letter-spacing:.12em}
+.step-intro .eyebrow:before{background:#72bb88}
+.step-intro h2{font-size:clamp(18px,2.1vw,25px);line-height:1.5;margin:11px 0 8px;letter-spacing:-.04em}
+.step-intro p{font-size:12px;line-height:1.9;color:var(--muted);margin:0}
+.step-card{position:relative;min-width:0;overflow:hidden;padding:17px 17px 16px;border:1px solid #dfede3;border-radius:22px;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(247,253,248,.94));box-shadow:0 10px 28px rgba(31,91,62,.055);transition:transform .18s,box-shadow .18s}
+.step-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(31,91,62,.09)}
+.step-number{display:inline-grid;place-items:center;width:31px;height:31px;border-radius:50%;background:#dff1e4;color:#43825a;font-weight:800;font-size:11px}
+.step-illustration{position:absolute;right:8px;top:4px;display:grid;place-items:center;width:70px;height:70px;border-radius:50%;font-size:38px;opacity:.88;background:radial-gradient(circle,#e7f5e8 0%,rgba(231,245,232,0) 70%)}
+.step-card h3{position:relative;margin:15px 0 7px;font-size:15px;letter-spacing:-.025em}
+.step-card p{position:relative;margin:0;color:#7a9083;font-size:11px;line-height:1.8;min-height:40px}
+.step-tags{display:inline-block;margin-top:12px;padding:5px 8px;border:1px solid #dcebe1;border-radius:999px;color:#548064;font-size:9px;background:#f8fcf8}
+.mode-picker,.panel{position:relative;z-index:2;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border-color:#dfede3;border-radius:28px;box-shadow:0 18px 48px rgba(31,91,62,.075)}
+.mode-heading h2{letter-spacing:-.04em}
+.mode-card{position:relative;overflow:hidden;border-color:#e0eee4;border-radius:22px;background:linear-gradient(145deg,#fff,#f7fcf8);padding:23px 21px}
+.mode-card:after{content:"";position:absolute;right:-18px;bottom:-28px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(190,228,198,.22),transparent 72%);pointer-events:none}
+.mode-icon{border-radius:17px;background:linear-gradient(145deg,#edfaef,#dff2e3);font-size:25px}
+.option-btn{border-radius:17px}
+.result-card{border-color:#e0eee4;border-radius:22px;box-shadow:0 12px 32px rgba(31,91,62,.065)}
+.result-card:first-child{border-color:#b8dfc5}
+.footer{position:relative;z-index:2;margin-top:42px;color:#769181;line-height:2}
+.footer-mark{font-size:38px;color:#4b9467;line-height:1}
+.footer-small{font-size:9px;letter-spacing:.2em;color:#a0b4a6}
+.leaf-corner{position:absolute;z-index:1;pointer-events:none;width:245px;height:315px;object-fit:contain;mix-blend-mode:multiply;opacity:.45;filter:saturate(.9)}
+.leaf-top{top:-34px;left:-125px;transform:rotate(-28deg)}
+.leaf-bottom{right:-114px;bottom:-65px;transform:rotate(154deg);width:280px;height:340px;opacity:.4}
+@media(max-width:800px){
+ .shell{width:min(100% - 30px,700px);padding-top:15px}
+ header{margin-bottom:19px;padding:8px 10px}
+ .hero{gap:14px;padding:27px 25px;min-height:285px}
+ .hero-visual{min-height:200px}
+ .hero-photo-frame{border-width:5px}
+ .hero-stamp{left:-10px;bottom:0;padding:8px 10px;font-size:10px}
+ .hero-leaf-photo{right:-3px}
+ .step-showcase{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+ .step-intro{grid-column:1/-1;text-align:center;padding:0 0 4px}
+ .step-intro .eyebrow{justify-content:center}
+ .step-intro p br{display:none}
+ .step-card{padding:14px 13px}
+ .step-illustration{width:55px;height:55px;font-size:30px}
+ .step-card h3{font-size:14px}
+ .step-card p{font-size:10px;min-height:52px}
+}
+@media(max-width:560px){
+ .shell{width:min(100% - 22px,500px);padding-top:10px;padding-bottom:48px}
+ header{border-radius:17px;margin-bottom:17px}
+ .brand{gap:8px}
+ .brand-mark{width:36px;height:36px;border-radius:13px;font-size:21px}
+ .brand-name{font-size:15px}
+ .brand-sub{font-size:8px;letter-spacing:.09em}
+ .header-links{gap:5px}
+ .pill-link{padding:8px 10px;font-size:10px}
+ .hero{grid-template-columns:1fr;gap:4px;padding:25px 21px 21px;border-radius:27px;min-height:0}
+ .hero h1{font-size:clamp(31px,8.4vw,42px);margin:14px 0 11px}
+ .hero p{font-size:13px;line-height:1.9}
+ .hero-cta{margin-top:16px;padding:13px 18px;font-size:12px;gap:19px}
+ .hero-note{font-size:9px;margin-top:10px}
+ .hero-visual{min-height:210px;margin:0 4px 2px 0}
+ .hero-photo-frame{width:83%;aspect-ratio:1.45;margin-left:12%;border-width:5px}
+ .hero-leaf-photo{width:105px;height:105px;top:1px;right:2px}
+ .hero-stamp{left:0;bottom:4px}
+ .step-showcase{grid-template-columns:1fr;gap:9px;margin-bottom:19px}
+ .step-intro{grid-column:auto;padding:3px 0 7px}
+ .step-intro h2{font-size:21px;margin:8px 0 4px}
+ .step-intro p{font-size:11px}
+ .step-card{min-height:122px;padding:16px 16px 13px 19px}
+ .step-number{position:absolute;left:16px;top:16px}
+ .step-card h3{margin:0 88px 7px 43px;padding-top:3px;font-size:14px}
+ .step-card p{margin-left:43px;margin-right:42px;min-height:0;font-size:10px}
+ .step-tags{margin:9px 0 0 43px}
+ .step-illustration{top:34px;right:8px;width:64px;height:64px;font-size:34px}
+ .mode-picker,.panel{border-radius:23px}
+ .leaf-corner{width:130px;height:180px;opacity:.23}
+ .leaf-top{top:-30px;left:-77px}
+ .leaf-bottom{right:-70px;bottom:-35px;width:155px;height:220px}
+ .footer{margin-top:28px}
+}
+\n</style>
 </head>
 <body>
 <div class="shell">
@@ -135,7 +245,26 @@ header{margin-bottom:44px}
 <a class="brand" href="index.html"><span class="brand-mark">⌂</span><span><span class="brand-name">献立日和</span><span class="brand-sub">YOUR DAILY MEAL COMPASS</span></span></a>
 <nav class="header-links"><a class="pill-link" href="favorites.html">♡ お気に入り</a><button class="pill-link" id="reset-top" type="button">↻ やり直す</button></nav>
 </header>
-<section class="hero"><span class="eyebrow">WHAT'S FOR TODAY?</span><h1>今日のごはん、<br><em>一緒に決めよう。</em></h1><p>気分や好みに答えるだけ。<br>あなたにぴったりの献立候補を3つ提案します。</p></section>
+<section class="hero">
+ <div class="hero-copy">
+  <span class="eyebrow">FRESH IDEAS FOR EVERYDAY</span>
+  <h1>今日は、<br><em>どんなごはんにする？</em></h1>
+  <p>食べたい気分や好みを選ぶだけ。<br>あなたにぴったりの献立が見つかるサイトです。</p>
+  <a class="hero-cta" href="#mode-picker">🍃 さっそく診断する <span aria-hidden="true">→</span></a>
+  <span class="hero-note">毎日の「何食べよう？」を、ちょっと楽しく。</span>
+ </div>
+ <div class="hero-visual" aria-label="新鮮な野菜を使った料理のイメージ">
+  <div class="hero-photo-frame"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1100&q=85" alt="彩り豊かなサラダボウル" fetchpriority="high"></div>
+  <img class="hero-leaf-photo" src="https://images.unsplash.com/photo-1585938734416-a093903b9471?auto=format&fit=crop&w=500&q=80" alt="" aria-hidden="true">
+  <span class="hero-stamp"><span>🍃</span> おいしい毎日を<br>もっと気軽に</span>
+ </div>
+</section>
+<section class="step-showcase" aria-label="献立診断の流れ">
+ <div class="step-intro"><span class="eyebrow">EASY 3 STEPS</span><h2>かんたん、3ステップ</h2><p>今の気分を選ぶだけで、<br>ぴったりの料理を探せます。</p></div>
+ <article class="step-card"><span class="step-number">01</span><div class="step-illustration step-rice" aria-hidden="true">🍚</div><h3>主食を選ぶ</h3><p>ごはん・麺・パンなど、食べたいものから。</p><span class="step-tags">ごはん　麺　パン</span></article>
+ <article class="step-card"><span class="step-number">02</span><div class="step-illustration step-greens" aria-hidden="true">🥬</div><h3>食材を選ぶ</h3><p>お肉や魚介、野菜などの気分に合わせて。</p><span class="step-tags">肉　魚介　野菜</span></article>
+ <article class="step-card"><span class="step-number">03</span><div class="step-illustration step-taste" aria-hidden="true">🥗</div><h3>好みの味を選ぶ</h3><p>その日の気分に合う味付けをセレクト。</p><span class="step-tags">甘辛　塩味　みそ味</span></article>
+</section>
 <main>
 <section class="mode-picker" id="mode-picker" aria-labelledby="mode-heading">
  <div class="mode-heading"><span class="eyebrow">CHOOSE YOUR STYLE</span><h2 id="mode-heading">どんなふうに決める？</h2><p>さっと決めたい日も、じっくり選びたい日も。</p></div>
@@ -154,7 +283,7 @@ header{margin-bottom:44px}
 <section id="result" aria-live="polite"></section>
 </main>
 <p class="small-note" id="small-note">答えに正解はありません。今の気分で選んでね。</p>
-<footer class="footer">献立日和 · 毎日の「何食べよう？」を、ちょっと楽しく。</footer>
+<img class="leaf-corner leaf-bottom" src="https://images.unsplash.com/photo-1585938734416-a093903b9471?auto=format&fit=crop&w=700&q=80" alt="" aria-hidden="true">\n<footer class="footer"><span class="footer-mark">❧</span><br>献立日和 · 毎日の「何食べよう？」を、ちょっと楽しく。<br><span class="footer-small">GOOD FOOD, GOOD MOOD.</span></footer>
 </div>
 <script>
 const ingredientGroups = [
