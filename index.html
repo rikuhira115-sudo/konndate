@@ -119,7 +119,7 @@ function questionVisible(q,ans){return !q.condition || ans[q.condition.key]===q.
 function visibleQuestionIndexes(){return currentQuestions.map((q,i)=>questionVisible(q,answers)?i:-1).filter(i=>i>=0);}
 function setMode(mode){
  currentMode=mode;
- currentQuestions=mode==="quick"?questions.filter(q=>quickKeys.includes(q.key)):questions.slice();
+ currentQuestions=mode==="quick"?quickKeys.map(key=>questions.find(q=>q.key===key)).filter(Boolean):questions.slice();
  index=0;answers={};lastResults=[];allRanked=[];shownNames=new Set();multiDraft=new Set();
  $("mode-picker").style.display="none";
  $("question-card").style.display="block";
@@ -260,7 +260,7 @@ function finish(){
   $("hint").textContent="条件外の料理は表示しないようにしています。時間や食材の条件を少し広げてみてね。";
   $("options").replaceChildren();
   const actions=document.createElement("div");actions.className="result-actions";
-  const back=document.createElement("button");back.className="primary-btn";back.textContent="条件を変える";back.onclick=()=>{index=Math.max(0,visibleQuestionIndexes().length-1);delete answers[currentQuestions[index]?.key];renderQuestion();};
+  const back=document.createElement("button");back.className="primary-btn";back.textContent="条件を変える";back.onclick=()=>{const visible=visibleQuestionIndexes();index=visible[visible.length-1]??0;delete answers[currentQuestions[index]?.key];renderQuestion();};
   const restart=document.createElement("button");restart.className="secondary-btn";restart.textContent="最初から";restart.onclick=resetAll;
   actions.append(back,restart);$("options").appendChild(actions);
   $("bar-inner").style.width="100%";return;
