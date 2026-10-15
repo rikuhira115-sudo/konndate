@@ -639,28 +639,55 @@ function finish(allowGenreExpansion=false){
  renderResults(picked);
 }
 function photoFor(item){
- const key=item["画像キー"];
- const category=item["料理カテゴリ"]||"",staple=item["主食"]||"";
- let fallback=photoSources.general;
- if(key&&photoSources[key])fallback=photoSources[key];
- else if(staple==="麺")fallback=photoSources.noodles;
- else if(staple==="パン")fallback=photoSources.sandwich;
- else if(staple==="米")fallback=photoSources.rice;
- else if(category==="中華")fallback=photoSources.asian;
- else if(category==="揚げ物")fallback=photoSources.friedChicken;
- else if(category==="煮物"||category==="鍋")fallback=photoSources.hotPot;
- else if(category==="麺")fallback=photoSources.noodles;
- else if(category==="ご飯もの"||category==="丼")fallback=photoSources.rice;
- // New menu entries carry dish-specific keywords. Use them to request a more relevant
- // food image while retaining a known-good Unsplash fallback if the source fails.
- const tags=item["画像検索語"];
- if(tags){
-  const lock=Array.from(String(item["メニュー名"])).reduce((n,ch)=>(n*31+ch.charCodeAt(0))>>>0,17);
-  // LoremFlickr uses comma-separated keywords in the URL path.
-  const safeTags=String(tags).toLowerCase().replace(/[^a-z0-9,-]/g,"").replace(/,+/g,",").replace(/^,|,$/g,"");
-  if(safeTags)return {url:"https://loremflickr.com/800/560/"+safeTags+"?lock="+lock,page:"https://loremflickr.com/",fallback:fallback.url};
- }
- return fallback;
+ const key=String(item["画像キー"]||"");
+ const name=String(item["メニュー名"]||"");
+ const tags=String(item["画像検索語"]||"");
+ const category=String(item["料理カテゴリ"]||"");
+ const staple=String(item["主食"]||"");
+ const genre=String(item["ジャンル"]||"");
+ // Use curated, stable photo URLs instead of a third-party keyword endpoint.
+ // Keyword endpoints can return unrelated images or change their results over time.
+ if(key && key!=="recipePhoto" && photoSources[key])return photoSources[key];
+ const corpus=(name+" "+tags+" "+category+" "+staple+" "+genre).toLowerCase();
+ const has=(...words)=>words.some(word=>corpus.includes(word));
+ let picked="general";
+ // Match the dish itself first, then broaden to the closest food family.
+ if(has("ramen","ラーメン","tonkotsu","paitan","mazesoba","油そば"))picked="ramen";
+ else if(has("udon","うどん","kishimen","きしめん","houtou","ほうとう"))picked="udon";
+ else if(has("soba","そば","蕎麦"))picked="soba";
+ else if(has("pasta","パスタ","carbonara","カルボナーラ","vongole","ジェノベーゼ","bolognese","ボロネーゼ","risotto","リゾット"))picked=has("cream","クリーム","carbonara","カルボナーラ")?"creamyPasta":has("carbonara","カルボナーラ")?"carbonara":"pasta";
+ else if(has("noodles","noodle","麺","焼きそば","ビーフン","pho,","pad-thai","ちゃんぽん","皿うどん"))picked="noodles";
+ else if(has("sushi","寿司","sashimi","刺身","鉄火","ちらし寿司","手巻き"))picked="sushi";
+ else if(has("curry","カレー"))picked=has("katsu","カツ","とんかつ")?"katsuCurry":"curry";
+ else if(has("gyudon","牛丼","beef-bowl","牛すき焼き丼"))picked="gyudon";
+ else if(has("katsudon","カツ丼"))picked="katsudon";
+ else if(has("oyakodon","親子丼","chicken-rice","chicken rice"))picked="chickenRice";
+ else if(has("donburi","rice,bowl","丼","rice-bowl","ご飯","炒飯","チャーハン","ピラフ","魯肉飯","ルーローハン","チキンオーバーライス","焼きおにぎり","おにぎり"))picked="rice";
+ else if(has("gyoza","dumpling","餃子","小籠包"))picked="gyoza";
+ else if(has("tempura","天ぷら"))picked="tempura";
+ else if(has("karaage","fried-chicken","fried chicken","唐揚げ","から揚げ"))picked="friedChicken";
+ else if(has("fish-fry","fish fry","フライ","アジフライ","白身魚フライ"))picked="fishFry";
+ else if(has("salmon","鮭","サーモン"))picked="salmon";
+ else if(has("soup","スープ","味噌汁","みそ汁","ポトフ","chowder"))picked="soup";
+ else if(has("hot-pot","hot pot","鍋","しゃぶしゃぶ","すき焼き"))picked="hotPot";
+ else if(has("salad","サラダ","vegetable","野菜","ブロッコリー","ラタトゥイユ"))picked="salad";
+ else if(has("sandwich","サンド","toast","トースト","wrap","kebab","パン","バゲット"))picked=has("french-toast","フレンチトースト")?"frenchToast":"sandwich";
+ else if(has("pizza","ピザ"))picked="pizza";
+ else if(has("omurice","オムライス"))picked="omurice";
+ else if(has("egg","卵","たまご","オムレツ","目玉焼き"))picked="egg";
+ else if(has("hamburger","ハンバーグ","hamburg","肉団子"))picked="hamburger";
+ else if(has("seafood","shrimp","prawn","clam","oyster","tuna","fish","sea-bream","sardine","mackerel","octopus","えび","海老","牡蠣","あさり","魚","鯖","サバ","鯛","まぐろ","マグロ","いわし","さんま","鰆","うなぎ"))picked="salmon";
+ else if(has("stir-fry","炒め","麻婆","回鍋肉","酢豚","チャプチェ","korean","taiwanese","asian","中華","韓国","エスニック"))picked="asian";
+ else if(has("grill","grilled","焼き","steak","ステーキ","tandoori","ソテー","照り焼き"))picked="grill";
+ else if(has("beef","pork","chicken","meat","牛肉","豚肉","鶏肉","ひき肉","肉"))picked="meat";
+ else if(category==="中華")picked="asian";
+ else if(staple==="麺")picked="noodles";
+ else if(staple==="パン")picked="sandwich";
+ else if(staple==="米"||category==="ご飯もの"||category==="丼")picked="rice";
+ else if(category==="揚げ物")picked="friedChicken";
+ else if(category==="煮物"||category==="鍋")picked="hotPot";
+ const selected=photoSources[picked]||photoSources.general;
+ return selected;
 }
 function imageEmoji(item){
  const c=item["料理カテゴリ"]||"";
