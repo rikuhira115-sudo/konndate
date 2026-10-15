@@ -392,17 +392,25 @@ function finish(){
 }
 function photoFor(item){
  const key=item["画像キー"];
- if(key&&photoSources[key])return photoSources[key];
  const category=item["料理カテゴリ"]||"",staple=item["主食"]||"";
- if(staple==="麺")return photoSources.noodles;
- if(staple==="パン")return photoSources.sandwich;
- if(staple==="米")return photoSources.rice;
- if(category==="中華")return photoSources.asian;
- if(category==="揚げ物")return photoSources.friedChicken;
- if(category==="煮物"||category==="鍋")return photoSources.hotPot;
- if(category==="麺")return photoSources.noodles;
- if(category==="ご飯もの"||category==="丼")return photoSources.rice;
- return photoSources.general;
+ let fallback=photoSources.general;
+ if(key&&photoSources[key])fallback=photoSources[key];
+ else if(staple==="麺")fallback=photoSources.noodles;
+ else if(staple==="パン")fallback=photoSources.sandwich;
+ else if(staple==="米")fallback=photoSources.rice;
+ else if(category==="中華")fallback=photoSources.asian;
+ else if(category==="揚げ物")fallback=photoSources.friedChicken;
+ else if(category==="煮物"||category==="鍋")fallback=photoSources.hotPot;
+ else if(category==="麺")fallback=photoSources.noodles;
+ else if(category==="ご飯もの"||category==="丼")fallback=photoSources.rice;
+ // New menu entries carry dish-specific keywords. Use them to request a more relevant
+ // food image while retaining a known-good Unsplash fallback if the source fails.
+ const tags=item["画像検索語"];
+ if(tags){
+  const lock=Array.from(String(item["メニュー名"])).reduce((n,ch)=>(n*31+ch.charCodeAt(0))>>>0,17);
+  return {url:"https://loremflickr.com/800/560/"+encodeURIComponent(String(tags).replace(/,/g,","))+"?lock="+lock,page:"https://www.loremflickr.com/",fallback:fallback.url};
+ }
+ return fallback;
 }
 function imageEmoji(item){
  const c=item["料理カテゴリ"]||"";
@@ -454,7 +462,7 @@ function renderResults(picked){
   const photoLabel=document.createElement("span");photoLabel.className="photo-caption";photoLabel.textContent="イメージ写真";
   const photoCredit=document.createElement("a");photoCredit.className="photo-credit";photoCredit.textContent="出典: Unsplash ↗";photoCredit.href=selectedPhoto.page||"https://unsplash.com/";photoCredit.target="_blank";photoCredit.rel="noopener noreferrer";
   if(!selectedPhoto.page)photoCredit.style.display="none";
-  img.onerror=()=>{img.remove();photoCredit.remove();photo.classList.add("photo-fallback");const emoji=document.createElement("span");emoji.className="photo-emoji";emoji.textContent=imageEmoji(item);photo.appendChild(emoji);};
+  img.onerror=()=>{if(selectedPhoto.fallback&&img.dataset.fallbackTried!=="1"){img.dataset.fallbackTried="1";img.src=selectedPhoto.fallback;photoCredit.href="https://unsplash.com/";photoCredit.textContent="出典: Unsplash ↗";return;}img.remove();photoCredit.remove();photo.classList.add("photo-fallback");const emoji=document.createElement("span");emoji.className="photo-emoji";emoji.textContent=imageEmoji(item);photo.appendChild(emoji);};
   photo.append(img,photoLabel);if(selectedPhoto.page)photo.appendChild(photoCredit);
   const body=document.createElement("div");body.className="result-card-body";
   const rank=document.createElement("span");rank.className="rank";rank.textContent=String(i+1).padStart(2,"0");
