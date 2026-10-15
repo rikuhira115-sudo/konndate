@@ -18,6 +18,19 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;ma
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:560px){.shell{width:min(100% - 22px,760px);padding-top:16px}.brand-mark{width:39px;height:39px}.brand-name{font-size:16px}.brand-sub{font-size:9px}.header-links{gap:5px}.pill-link{padding:9px 11px;font-size:11px}.hero{margin-bottom:20px}.panel{border-radius:22px;padding:22px 17px}.options{grid-template-columns:1fr;gap:8px}.option-btn{min-height:57px;padding:13px 15px}.result-grid{grid-template-columns:1fr}.result-card{padding:19px}.result-card h3{font-size:19px}.rank{margin-bottom:10px}.result-card .save-btn{max-width:220px}.result-card{display:grid;grid-template-columns:1fr;justify-items:start}.result-card .save-btn{width:100%}.result-card a.recipe{margin-bottom:13px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+.mode-picker{display:none;margin-bottom:20px;padding:clamp(20px,5vw,32px);background:var(--card);border:1px solid #e8e9e1;border-radius:26px;box-shadow:var(--shadow)}
+.mode-heading{text-align:center;margin-bottom:22px}.mode-heading .eyebrow{justify-content:center}.mode-heading h2{font-size:clamp(21px,4vw,27px);margin:10px 0 6px;letter-spacing:-.035em}.mode-heading p{font-size:13px;color:var(--muted);line-height:1.8;margin:0}
+.mode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mode-card{display:block;text-align:left;border:1px solid var(--line);background:#fff;border-radius:20px;padding:22px 20px;transition:transform .16s,border-color .16s,box-shadow .16s}.mode-card:hover{transform:translateY(-2px);border-color:#a8bba6;box-shadow:0 8px 24px #24332c0e}.mode-icon{font-size:26px;display:block;margin-bottom:10px}.mode-card strong{display:block;font-size:16px;margin-bottom:8px;color:var(--ink)}.mode-card span:last-child{display:block;color:var(--muted);font-size:12px;line-height:1.8}.mode-card em{display:inline-block;font-style:normal;color:var(--green);font-size:11px;font-weight:800;margin-top:12px}
+.option-btn.selected{border-color:var(--green);background:var(--mint);box-shadow:inset 0 0 0 1px var(--green)}.option-btn.selected:after{content:'✓';color:var(--green);font-weight:900}
+.multi-actions{display:none;justify-content:flex-end;gap:8px;margin-top:13px}.multi-actions button{border:1px solid var(--line);border-radius:999px;background:white;padding:10px 15px;font-size:12px;font-weight:800;color:var(--green)}.multi-actions button:first-child{background:var(--green);border-color:var(--green);color:#fff}
+#question-card .actions{flex-wrap:wrap;align-items:center}.result-note{margin:0 auto 16px;padding:12px 16px;max-width:760px;border-radius:14px;background:#edf2e9;color:#4c6850;font-size:12px;line-height:1.8;text-align:center}
+.result-grid{align-items:stretch}.result-card{padding:0;overflow:hidden;display:flex;flex-direction:column}.food-photo{height:156px;position:relative;overflow:hidden;background:linear-gradient(135deg,#e8efe3,#f3e5d4)}.food-photo img{display:block;width:100%;height:100%;object-fit:cover}.photo-caption{position:absolute;right:9px;bottom:8px;background:#15251dcc;color:#fff;border-radius:999px;padding:4px 7px;font-size:9px;letter-spacing:.02em}.photo-fallback{display:grid;place-items:center}.photo-emoji{font-size:58px;filter:drop-shadow(0 5px 6px #24332c20)}
+.result-card-body{padding:18px 16px 16px;display:flex;flex-direction:column;align-items:flex-start;flex:1}.result-card .rank{margin-bottom:10px}.result-card h3{font-size:17px}.reason-title{margin:2px 0 8px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.04em}.reason-list{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 13px}.reason-chip{display:inline-block;background:#f1f4ed;color:#48694d;padding:5px 7px;border-radius:8px;font-size:10px;line-height:1.4}.result-card a.recipe{margin-top:auto;padding-top:4px}.result-card .save-btn{margin-top:0}
+.primary-btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}.result-actions{align-items:center}
+@media(max-width:680px){.result-grid{grid-template-columns:1fr}.result-card{display:grid;grid-template-columns:minmax(105px,35%) minmax(0,1fr);align-items:stretch}.food-photo{height:100%;min-height:220px;border-radius:0}.result-card-body{padding:16px 14px}.result-card h3{font-size:18px}.result-card a.recipe{font-size:11px}.reason-chip{font-size:9px}.mode-grid{grid-template-columns:1fr}.mode-card{padding:19px}.mode-icon{display:inline-block;vertical-align:middle;margin:0 9px 0 0}.mode-card strong{display:inline-block}.mode-card em{margin-top:8px}}
+@media(max-width:420px){.result-card{grid-template-columns:1fr}.food-photo{height:150px;min-height:150px}.result-card-body{padding:17px}.result-card .save-btn{max-width:none}.multi-actions button{flex:1}}
+
 </style>
 </head>
 <body>
@@ -28,30 +41,73 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;ma
 </header>
 <section class="hero"><span class="eyebrow">WHAT'S FOR TODAY?</span><h1>今日のごはん、<br><em>一緒に決めよう。</em></h1><p>気分や好みに答えるだけ。<br>あなたにぴったりの献立候補を3つ提案します。</p></section>
 <main>
-<section class="panel" id="question-card" aria-live="polite">
+<section class="mode-picker" id="mode-picker" aria-labelledby="mode-heading">
+ <div class="mode-heading"><span class="eyebrow">CHOOSE YOUR STYLE</span><h2 id="mode-heading">どんなふうに決める？</h2><p>さっと決めたい日も、じっくり選びたい日も。</p></div>
+ <div class="mode-grid">
+  <button type="button" class="mode-card" id="quick-mode"><span class="mode-icon">⚡</span><strong>かんたん診断</strong><span>3つの質問だけで、今の気分に合う候補を提案。</span><em>約30秒で完了 →</em></button>
+  <button type="button" class="mode-card" id="full-mode"><span class="mode-icon">🍽️</span><strong>じっくり診断</strong><span>主食・ジャンル・食材など、細かい条件まで選べます。</span><em>好みを詳しく設定 →</em></button>
+ </div>
+</section>
+<section class="panel" id="question-card" aria-live="polite" style="display:none">
 <div class="panel-top"><span class="step-label" id="step-label">YOUR PREFERENCES</span><span class="step-count" id="step-count">01 / 09</span></div>
 <div class="progress" aria-label="診断の進み具合"><div class="progress-inner" id="bar-inner"></div></div>
 <h2 id="question">献立データを読み込んでいます…</h2><p id="hint"></p><div class="options" id="options"></div>
-<div class="actions"><button class="ghost-btn" id="back-btn" type="button" disabled>← 前の質問</button><button class="ghost-btn" id="reset-btn" type="button">最初から ↻</button></div>
+<div class="multi-actions" id="multi-actions"><button type="button" id="multi-continue">選択した食材で進む →</button><button type="button" id="multi-clear">こだわらない</button></div>
+<div class="actions"><button class="ghost-btn" id="back-btn" type="button" disabled>← 前の質問</button><button class="ghost-btn" id="mode-back-btn" type="button">診断方法を変える</button><button class="ghost-btn" id="reset-btn" type="button">最初から ↻</button></div>
 </section>
 <section id="result" aria-live="polite"></section>
 </main>
-<p class="small-note">答えに正解はありません。今の気分で選んでね。</p>
+<p class="small-note" id="small-note">答えに正解はありません。今の気分で選んでね。</p>
 <footer class="footer">献立日和 · 毎日の「何食べよう？」を、ちょっと楽しく。</footer>
 </div>
 <script>
-const questions = [
-{text:"主食は何がいい？",hint:"まずは食べたいもののベースから。",key:"主食",options:[{label:"🍚 ごはん",value:"米"},{label:"🥐 パン",value:"パン"},{label:"🍜 麺",value:"麺"},{label:"🥗 主食なし・その他",value:"なし"}]},
-{text:"今日はどんなジャンル？",hint:"いつもの定番でも、ちょっと冒険でも。",key:"ジャンル",options:[{label:"🍱 和食",value:"和"},{label:"🍝 洋食",value:"洋"},{label:"🥟 中華",value:"中"},{label:"🌶️ 韓国料理",value:"韓"},{label:"🍲 エスニック",value:"エスニック"}]},
-{text:"メインの食材は？",hint:"肉以外を選ぶと、魚・卵・豆腐・野菜などから探します。",key:"食材タイプ",options:[{label:"🥩 肉料理",value:"肉"},{label:"🐟 肉以外",value:"非肉"}]},
-{text:"どのお肉が食べたい？",hint:"選んだお肉を使った料理を優先します。",key:"肉の種類",condition:{key:"食材タイプ",value:"肉"},options:[{label:"🐮 牛肉",value:["牛"]},{label:"🐷 豚肉",value:["豚"]},{label:"🍗 鶏肉",value:["鶏"]},{label:"🥟 ひき肉",value:["ひき","挽"]}]},
-{text:"合わせたい食材は？",hint:"食材を指定しない場合は、ほかの回答を重視します。",key:"肉以外の材料",options:[{label:"🐟 魚介",value:["魚","鮭","鯖","白身","海老"]},{label:"🥬 野菜",value:["玉ねぎ","にんじん","キャベツ","野菜"]},{label:"🧈 豆腐",value:["豆腐"]},{label:"🥚 卵",value:["卵"]},{label:"✨ こだわらない",value:[]}]},
-{text:"どんな味の気分？",hint:"味の好みも候補の順位に反映します。",key:"味の傾向",options:[{label:"🍖 こってり",value:"こってり"},{label:"🍚 いつもの味",value:"普通"},{label:"🍃 あっさり",value:"あっさり"}]},
-{text:"ボリュームはどれくらい？",hint:"軽めから、しっかり食べたい日まで。",key:"ボリューム",options:[{label:"🌱 軽め",value:"軽い"},{label:"🙂 普通",value:"普通"},{label:"💪 がっつり",value:"重い"}]},
-{text:"調理時間はどれくらい？",hint:"時間内に作れる料理を優先。長めの料理は順位を下げます。",key:"調理時間(分)",options:[{label:"⚡ 15分以内",value:15},{label:"⏱️ 30分以内",value:30},{label:"🍳 時間は気にしない",value:999}]},
-{text:"いつ食べるごはん？",hint:"食事の時間に合うメニューを選びます。",key:"時間帯",options:[{label:"🌅 朝ごはん",value:"朝食"},{label:"☀️ 昼ごはん",value:"昼食"},{label:"🌙 晩ごはん",value:"夕食"},{label:"🌜 夜食",value:"夜食"}]}
+const ingredientGroups = [
+ {label:"🐟 魚介",name:"魚介",keywords:["魚","鮭","鯖","白身","海老","イカ","タコ"]},
+ {label:"🥬 野菜",name:"野菜",keywords:["玉ねぎ","にんじん","キャベツ","野菜"]},
+ {label:"🧈 豆腐",name:"豆腐",keywords:["豆腐"]},
+ {label:"🥚 卵",name:"卵",keywords:["卵"]}
 ];
-let db=[],index=0,answers={},isFinished=false,lastResults=[];
+const questions = [
+ {text:"主食は何がいい？",hint:"食べたいもののベースを選んでね。迷ったらおまかせでもOK。",key:"主食",options:[
+  {label:"🍚 ごはん",value:"米"},{label:"🥐 パン",value:"パン"},{label:"🍜 麺",value:"麺"},{label:"🥗 主食なし",value:"なし"},{label:"✨ おまかせ",value:""}
+ ]},
+ {text:"今日はどんなジャンル？",hint:"今の気分に近いものを選んでね。",key:"ジャンル",options:[
+  {label:"🍱 和食",value:"和"},{label:"🍝 洋食",value:"洋"},{label:"🥟 中華",value:"中"},{label:"🌶️ 韓国料理",value:"韓"},{label:"🍲 エスニック",value:"エスニック"},{label:"✨ おまかせ",value:""}
+ ]},
+ {text:"メインの食材は？",hint:"肉以外を選んだ場合、肉を使う料理は候補から外します。",key:"食材タイプ",options:[
+  {label:"🥩 肉料理",value:"肉"},{label:"🐟 肉以外",value:"非肉"},{label:"✨ こだわらない",value:"どちらでも"}
+ ]},
+ {text:"どのお肉が食べたい？",hint:"選んだお肉を使う料理だけを候補にします。",key:"肉の種類",condition:{key:"食材タイプ",value:"肉"},options:[
+  {label:"🐮 牛肉",value:["牛"]},{label:"🐷 豚肉",value:["豚"]},{label:"🍗 鶏肉",value:["鶏"]},{label:"🥟 ひき肉",value:["ひき","挽"]}
+ ]},
+ {text:"合わせたい食材は？",hint:"複数選べます。選んだ食材を使う料理を優先するよ。",key:"肉以外の材料",multi:true,options:
+  ingredientGroups.map(g=>({label:g.label,value:g.keywords})).concat([{label:"✨ こだわらない",value:[]}])
+ },
+ {text:"どんな味の気分？",hint:"あっさり・いつもの味・こってりから選べます。",key:"味の傾向",options:[
+  {label:"🍖 こってり",value:"こってり"},{label:"🍚 いつもの味",value:"普通"},{label:"🍃 あっさり",value:"あっさり"},{label:"✨ おまかせ",value:""}
+ ]},
+ {text:"ボリュームはどれくらい？",hint:"軽めから、しっかり食べたい日まで。",key:"ボリューム",options:[
+  {label:"🌱 軽め",value:"軽い"},{label:"🙂 普通",value:"普通"},{label:"💪 がっつり",value:"重い"},{label:"✨ おまかせ",value:""}
+ ]},
+ {text:"調理時間はどれくらい？",hint:"時間を指定すると、その時間内で作れる料理だけに絞り込みます。",key:"調理時間(分)",options:[
+  {label:"⚡ 15分以内",value:15},{label:"⏱️ 30分以内",value:30},{label:"🍳 時間は気にしない",value:999}
+ ]},
+ {text:"いつ食べるごはん？",hint:"朝・昼・夜に合わせた候補も選べるよ。",key:"時間帯",options:[
+  {label:"🌅 朝ごはん",value:"朝食"},{label:"☀️ 昼ごはん",value:"昼食"},{label:"🌙 晩ごはん",value:"夕食"},{label:"🌜 夜食",value:"夜食"},{label:"✨ おまかせ",value:""}
+ ]}
+];
+const quickKeys = ["食材タイプ","調理時間(分)","味の傾向"];
+const photoSources = {
+ noodles:"https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1000&q=80",
+ asian:"https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=1000&q=80",
+ bowl:"https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1000&q=80",
+ greens:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1000&q=80",
+ soup:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=80",
+ meat:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80",
+ general:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80"
+};
+let db=[],index=0,answers={},isFinished=false,lastResults=[],allRanked=[],shownNames=new Set(),currentMode=null,currentQuestions=[];
+let multiDraft=new Set();
 const $=id=>document.getElementById(id);
 function normalizeArray(v){return Array.isArray(v)?v:(v==null?[]:[v]);}
 function hasAny(materials,keywords){return keywords.some(k=>materials.some(m=>String(m).includes(k)));}
@@ -60,116 +116,283 @@ function isMeat(item){
  return hasAny(ms,["牛肉","豚肉","鶏肉","ひき肉","挽肉","羊肉","肉"]);
 }
 function questionVisible(q,ans){return !q.condition || ans[q.condition.key]===q.condition.value;}
-function visibleQuestionIndexes(){return questions.map((q,i)=>questionVisible(q,answers)?i:-1).filter(i=>i>=0);}
+function visibleQuestionIndexes(){return currentQuestions.map((q,i)=>questionVisible(q,answers)?i:-1).filter(i=>i>=0);}
+function setMode(mode){
+ currentMode=mode;
+ currentQuestions=mode==="quick"?questions.filter(q=>quickKeys.includes(q.key)):questions.slice();
+ index=0;answers={};lastResults=[];allRanked=[];shownNames=new Set();multiDraft=new Set();
+ $("mode-picker").style.display="none";
+ $("question-card").style.display="block";
+ $("result").replaceChildren();
+ $("small-note").textContent=mode==="quick"?"かんたん診断は3問で完了。迷ったら直感で選んでね。":"詳しい診断では、食材や食事の時間まで指定できます。";
+ renderQuestion();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function returnToModes(){
+ currentMode=null;currentQuestions=[];index=0;answers={};lastResults=[];allRanked=[];shownNames=new Set();multiDraft=new Set();
+ $("question-card").style.display="none";$("result").replaceChildren();$("mode-picker").style.display="block";
+ $("bar-inner").style.width="0";$("small-note").textContent="答えに正解はありません。今の気分で選んでね。";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function sameValue(a,b){return Array.isArray(a)&&Array.isArray(b)?JSON.stringify(a)===JSON.stringify(b):a===b;}
 function renderQuestion(){
  const visible=visibleQuestionIndexes();
  if(!visible.length){finish();return;}
- while(index<questions.length && !questionVisible(questions[index],answers)) index++;
- if(index>=questions.length){finish();return;}
- const q=questions[index],step=visible.indexOf(index)+1;
- $("step-label").textContent="YOUR PREFERENCES";
+ if(!visible.includes(index))index=visible.find(i=>i>=index)??visible[visible.length-1];
+ const q=currentQuestions[index],step=visible.indexOf(index)+1;
+ $("step-label").textContent=currentMode==="quick"?"QUICK CHECK":"YOUR PREFERENCES";
  $("step-count").textContent=String(step).padStart(2,"0")+" / "+String(visible.length).padStart(2,"0");
  $("bar-inner").style.width=((step-1)/visible.length*100)+"%";
  $("question").textContent=q.text;$("hint").textContent=q.hint;
  $("options").replaceChildren();
+ const multiActions=$("multi-actions");
+ multiActions.style.display=q.multi?"flex":"none";
+ if(q.multi){
+  const selected=normalizeArray(answers[q.key]);
+  multiDraft=new Set(q.options.filter(opt=>opt.value.length&&opt.value.some(k=>selected.includes(k))).map(opt=>opt.label));
+ }else multiDraft=new Set();
  q.options.forEach(opt=>{
   const b=document.createElement("button");b.type="button";b.className="option-btn";b.textContent=opt.label;
-  b.addEventListener("click",()=>selectAnswer(opt.value));$("options").appendChild(b);
+  if(q.multi)b.classList.toggle("selected",multiDraft.has(opt.label));
+  else b.classList.toggle("selected",Object.prototype.hasOwnProperty.call(answers,q.key)&&sameValue(answers[q.key],opt.value));
+  b.addEventListener("click",()=>{
+   if(q.multi){
+    if(!opt.value.length)multiDraft.clear();
+    else if(multiDraft.has(opt.label))multiDraft.delete(opt.label);
+    else multiDraft.add(opt.label);
+    Array.from($("options").querySelectorAll(".option-btn")).forEach((button,i)=>button.classList.toggle("selected",multiDraft.has(q.options[i].label)));
+   }else selectAnswer(opt.value);
+  });
+  $("options").appendChild(b);
  });
  $("back-btn").disabled=visible.indexOf(index)<=0;
  $("question-card").style.display="block";$("result").replaceChildren();isFinished=false;
 }
+function confirmMulti(){
+ const q=currentQuestions[index];if(!q||!q.multi)return;
+ const selected=q.options.filter(opt=>multiDraft.has(opt.label)).flatMap(opt=>opt.value);
+ answers[q.key]=[...new Set(selected)];
+ advanceQuestion();
+}
 function selectAnswer(value){
- const q=questions[index];answers[q.key]=value;
- // 分岐が変わったときに、表示されなくなった質問の回答を残さない
- questions.forEach(item=>{if(item.condition && !questionVisible(item,answers)) delete answers[item.key];});
+ const q=currentQuestions[index];answers[q.key]=Array.isArray(value)?value.slice():value;
+ // 分岐が変わって表示されなくなった質問の回答は保持しない
+ questions.forEach(item=>{if(item.condition&&!questionVisible(item,answers))delete answers[item.key];});
+ advanceQuestion();
+}
+function advanceQuestion(){
  const visible=visibleQuestionIndexes(),pos=visible.indexOf(index);
- if(pos>=visible.length-1){finish();return;}
+ if(pos<0||pos>=visible.length-1){finish();return;}
  index=visible[pos+1];renderQuestion();
 }
 function goBack(){
  const visible=visibleQuestionIndexes(),pos=visible.indexOf(index);
  if(pos<=0)return;
- delete answers[questions[index].key];index=visible[pos-1];renderQuestion();
+ index=visible[pos-1];renderQuestion();
 }
-function resetAll(){index=0;answers={};isFinished=false;lastResults=[];$("result").replaceChildren();$("question-card").style.display="block";renderQuestion();}
+function resetAll(){
+ if(!currentMode){returnToModes();return;}
+ index=0;answers={};isFinished=false;lastResults=[];allRanked=[];shownNames=new Set();multiDraft=new Set();
+ $("result").replaceChildren();$("question-card").style.display="block";renderQuestion();window.scrollTo({top:0,behavior:"smooth"});
+}
+function matchesHardCriteria(item){
+ const a=answers,mats=normalizeArray(item["主な材料"]).map(String);
+ if(a["食材タイプ"]==="肉"&&!isMeat(item))return false;
+ if(a["食材タイプ"]==="非肉"&&isMeat(item))return false;
+ if(Array.isArray(a["肉の種類"])&&a["肉の種類"].length&&!hasAny(mats,a["肉の種類"]))return false;
+ if(a["調理時間(分)"]!==undefined&&Number(a["調理時間(分)"])!==999){
+  const limit=Number(a["調理時間(分)"]),mins=Number(item["調理時間(分)"]);
+  if(!Number.isFinite(mins)||mins>limit)return false;
+ }
+ return true;
+}
+function selectedIngredientGroups(){
+ const selected=normalizeArray(answers["肉以外の材料"]);
+ return ingredientGroups.filter(group=>group.keywords.some(k=>selected.includes(k)));
+}
 function scoreItem(item){
  let score=0;const a=answers,mats=normalizeArray(item["主な材料"]).map(String);
- // 主食・ジャンル・味・量・時間帯を個別に評価
- if(a["主食"] && item["主食"]===a["主食"])score+=5;
- if(a["ジャンル"] && item["ジャンル"]===a["ジャンル"])score+=5;
- if(a["味の傾向"] && item["味の傾向"]===a["味の傾向"])score+=4;
- if(a["ボリューム"] && item["ボリューム"]===a["ボリューム"])score+=3;
- if(a["時間帯"] && normalizeArray(item["時間帯"]).includes(a["時間帯"]))score+=3;
- if(a["調理時間(分)"]!==undefined){
-  const limit=Number(a["調理時間(分)"]),mins=Number(item["調理時間(分)"]);
-  if(limit===999)score+=1;else if(Number.isFinite(mins)&&mins<=limit)score+=5;else if(Number.isFinite(mins))score-=Math.min(5,Math.ceil((mins-limit)/10));
+ // 条件で絞り込んだ後、残った候補を好みとの一致度で順位付けする
+ if(a["主食"]&&item["主食"]===a["主食"])score+=5;
+ if(a["ジャンル"]&&item["ジャンル"]===a["ジャンル"])score+=5;
+ if(a["味の傾向"]&&item["味の傾向"]===a["味の傾向"])score+=4;
+ if(a["ボリューム"]&&item["ボリューム"]===a["ボリューム"])score+=3;
+ if(a["時間帯"]&&normalizeArray(item["時間帯"]).includes(a["時間帯"]))score+=3;
+ if(a["調理時間(分)"]!==undefined&&Number(a["調理時間(分)"])!==999){
+  const mins=Number(item["調理時間(分)"]);if(Number.isFinite(mins))score+=Math.max(0,3-Math.floor(mins/10));
  }
- if(a["食材タイプ"]==="肉"){
-  if(isMeat(item))score+=4;else score-=5;
- }else if(a["食材タイプ"]==="非肉"){
-  if(isMeat(item))score-=12;else score+=5;
- }
- if(a["肉の種類"]){
-  const keys=a["肉の種類"];
-  if(hasAny(mats,keys))score+=7;else score-=5;
- }
- const chosen=a["肉以外の材料"];
- if(Array.isArray(chosen)&&chosen.length){
-  if(hasAny(mats,chosen))score+=4;else score-=2;
+ const chosen=selectedIngredientGroups();
+ if(chosen.length){
+  const matched=chosen.filter(group=>hasAny(mats,group.keywords)).length;
+  score+=matched*4-(chosen.length-matched)*1.5;
  }
  return score;
 }
+function shuffleTied(entries){
+ entries.sort((a,b)=>b.score-a.score);
+ for(let start=0;start<entries.length;){
+  let end=start+1;while(end<entries.length&&entries[end].score===entries[start].score)end++;
+  for(let i=end-1;i>start;i--){const j=start+Math.floor(Math.random()*(i-start+1));[entries[i],entries[j]]=[entries[j],entries[i]];}
+  start=end;
+ }
+ return entries;
+}
+function chooseDiverse(entries){
+ const picked=[],names=new Set(),categories=new Set();
+ for(const entry of entries){
+  const name=entry.item["メニュー名"];if(names.has(name))continue;
+  const category=entry.item["料理カテゴリ"]||"主菜";
+  if(!categories.has(category)){picked.push(entry);names.add(name);categories.add(category);}
+  if(picked.length===3)break;
+ }
+ for(const entry of entries){
+  if(picked.length===3)break;
+  const name=entry.item["メニュー名"];if(!names.has(name)){picked.push(entry);names.add(name);}
+ }
+ return picked;
+}
 function finish(){
- const candidates=db.filter(item=>item&&item["メニュー名"]);
- if(!candidates.length){showError("料理データが空か、読み込めませんでした。menu.json の内容を確認してください。");return;}
- const ranked=candidates.map((item,order)=>({item,score:scoreItem(item),order}));
- ranked.sort((a,b)=>b.score-a.score||a.order-b.order);
- // 上位3件は同じ料理名を重複表示せず、料理カテゴリの偏りもなるべく避ける
- const picked=[],usedNames=new Set(),usedCategories=new Set();
- for(const entry of ranked){
-  const name=entry.item["メニュー名"];if(usedNames.has(name))continue;
-  const cat=entry.item["料理カテゴリ"]||"その他";
-  if(!usedCategories.has(cat)){picked.push(entry);usedNames.add(name);usedCategories.add(cat);}
-  if(picked.length===3)break;
+ const candidates=db.filter(item=>item&&item["メニュー名"]&&matchesHardCriteria(item));
+ if(!db.length){showError("料理データを読み込めませんでした。menu.json の内容を確認してください。");return;}
+ if(!candidates.length){
+  $("question-card").style.display="block";$("result").replaceChildren();
+  $("question").textContent="条件に合う料理が見つかりませんでした";
+  $("hint").textContent="条件外の料理は表示しないようにしています。時間や食材の条件を少し広げてみてね。";
+  $("options").replaceChildren();
+  const actions=document.createElement("div");actions.className="result-actions";
+  const back=document.createElement("button");back.className="primary-btn";back.textContent="条件を変える";back.onclick=()=>{index=Math.max(0,visibleQuestionIndexes().length-1);delete answers[currentQuestions[index]?.key];renderQuestion();};
+  const restart=document.createElement("button");restart.className="secondary-btn";restart.textContent="最初から";restart.onclick=resetAll;
+  actions.append(back,restart);$("options").appendChild(actions);
+  $("bar-inner").style.width="100%";return;
  }
- for(const entry of ranked){
-  if(picked.length===3)break;
-  const name=entry.item["メニュー名"];if(!usedNames.has(name)){picked.push(entry);usedNames.add(name);}
+ allRanked=shuffleTied(candidates.map((item,order)=>({item,score:scoreItem(item),order})));
+ const picked=chooseDiverse(allRanked);
+ lastResults=picked.map(x=>x.item);shownNames=new Set(lastResults.map(x=>x["メニュー名"]));isFinished=true;
+ renderResults(picked,"initial");
+}
+function photoUrl(item){
+ const name=item["メニュー名"]||"",category=item["料理カテゴリ"]||"";
+ if(/ラーメン|うどん|そば|焼きそば|パスタ|ナポリタン|ペペロンチーノ|カルボナーラ|ミートソース|冷やし中華|担々麺/.test(name))return photoSources.noodles;
+ if(/餃子|シュウマイ|春巻|エビチリ|酢豚|青椒肉絲|麻婆豆腐|回鍋肉|八宝菜/.test(name)||category==="中華")return photoSources.asian;
+ if(/丼|チャーハン|カレー|オムライス|ドリア|ピラフ|天津飯/.test(name)||category==="丼"||category==="ご飯もの")return photoSources.bowl;
+ if(/サラダ|野菜|きんぴら|ひじき|豆腐/.test(name)||category==="炒め物")return photoSources.greens;
+ if(/スープ|味噌汁|豚汁|シチュー|おでん|ポトフ/.test(name)||category==="スープ"||category==="煮物")return photoSources.soup;
+ if(/ハンバーグ|生姜焼き|ステーキ|焼き魚|唐揚げ|とんかつ|焼肉|肉じゃが/.test(name)||category==="揚げ物")return photoSources.meat;
+ return photoSources.general;
+}
+function imageEmoji(item){
+ const c=item["料理カテゴリ"]||"";
+ if(c==="麺")return "🍜";if(c==="中華")return "🥟";if(c==="スープ"||c==="煮物")return "🍲";
+ if(c==="丼"||c==="ご飯もの")return "🍚";if(c==="揚げ物")return "🍤";if(c==="粉物")return "🥞";
+ return "🍽️";
+}
+function getReasons(item){
+ const a=answers,reasons=[];
+ if(a["食材タイプ"]==="肉")reasons.push("肉料理から選択");
+ if(a["食材タイプ"]==="非肉")reasons.push("肉以外の料理");
+ if(Array.isArray(a["肉の種類"])&&a["肉の種類"].length){
+  const meatLabel=({"牛":"牛肉","豚":"豚肉","鶏":"鶏肉","ひき":"ひき肉"})[a["肉の種類"][0]]||"選んだお肉";
+  reasons.push(meatLabel+"を使用");
  }
- lastResults=picked.map(x=>x.item);isFinished=true;
- $("question-card").style.display="none";
- const root=$("result");root.replaceChildren();
+ if(a["調理時間(分)"]!==undefined&&Number(a["調理時間(分)"])!==999)reasons.push(Number(item["調理時間(分)"])+"分で作れる");
+ if(a["主食"]&&item["主食"]===a["主食"])reasons.push(({米:"ごはんに合う",麺:"麺料理",パン:"パンに合う",なし:"主食なし"})[a["主食"]]||"主食の好みに一致");
+ if(a["ジャンル"]&&item["ジャンル"]===a["ジャンル"])reasons.push(({和:"和食の気分にぴったり",洋:"洋食の気分にぴったり",中:"中華の気分にぴったり",韓:"韓国料理の気分にぴったり",エスニック:"エスニック料理の気分にぴったり"})[a["ジャンル"]]||"ジャンルが好みに一致");
+ if(a["味の傾向"]&&item["味の傾向"]===a["味の傾向"])reasons.push(({あっさり:"あっさりした味",普通:"いつもの味",こってり:"こってりした味"})[a["味の傾向"]]||"味が好みに一致");
+ if(a["ボリューム"]&&item["ボリューム"]===a["ボリューム"])reasons.push(({軽い:"軽めのボリューム",普通:"ちょうどよいボリューム",重い:"がっつり食べられる"})[a["ボリューム"]]||"ボリュームが好みに一致");
+ if(a["時間帯"]&&normalizeArray(item["時間帯"]).includes(a["時間帯"]))reasons.push(({朝食:"朝ごはん向き",昼食:"昼ごはん向き",夕食:"晩ごはん向き",夜食:"夜食向き"})[a["時間帯"]]||"食事の時間に合う");
+ const chosen=selectedIngredientGroups(),mats=normalizeArray(item["主な材料"]).map(String);
+ chosen.filter(g=>hasAny(mats,g.keywords)).forEach(g=>reasons.push(g.name+"を使用"));
+ return [...new Set(reasons)].slice(0,3);
+}
+function renderResults(picked,mode){
+ const root=$("result");root.replaceChildren();$("question-card").style.display="none";
  const intro=document.createElement("div");intro.className="result-intro";
- intro.innerHTML='<div class="result-kicker">TODAY’S MENU</div><h2>今日のおすすめ、3品。</h2><p>選んだ条件をもとに、相性のよい順に並べました。<br>気になる料理をチェックしてみてね。</p>';root.appendChild(intro);
+ intro.innerHTML='<div class="result-kicker">TODAY’S MENU</div><h2>今日のおすすめ、'+picked.length+'品。</h2><p>条件に合う料理から、好みとの相性と候補のバランスを見て選びました。<br>気になる料理をチェックしてみてね。</p>';root.appendChild(intro);
+ if(allRanked.length<=3){
+  const note=document.createElement("p");note.className="result-note";note.textContent="この条件に合う料理は全部で"+allRanked.length+"種類です。候補を増やすには、食材や調理時間の条件を少し広げてみてね。";root.appendChild(note);
+ }else if(picked.length<3){
+  const note=document.createElement("p");note.className="result-note";note.textContent="まだ表示していない候補は"+picked.length+"品です。条件を守るため、重複した料理や条件外の料理は追加していません。";root.appendChild(note);
+ }
  const grid=document.createElement("div");grid.className="result-grid";
  picked.forEach((entry,i)=>{
   const item=entry.item,card=document.createElement("article");card.className="result-card";
+  const photo=document.createElement("div");photo.className="food-photo";
+  const img=document.createElement("img");img.src=photoUrl(item);img.alt=item["メニュー名"]+"のイメージ写真";img.loading="lazy";img.onerror=()=>{img.remove();photo.classList.add("photo-fallback");const emoji=document.createElement("span");emoji.className="photo-emoji";emoji.textContent=imageEmoji(item);photo.appendChild(emoji);};
+  const photoLabel=document.createElement("span");photoLabel.className="photo-caption";photoLabel.textContent="写真はイメージです";
+  photo.append(img,photoLabel);
+  const body=document.createElement("div");body.className="result-card-body";
   const rank=document.createElement("span");rank.className="rank";rank.textContent=String(i+1).padStart(2,"0");
   const title=document.createElement("h3");title.textContent=item["メニュー名"];
   const meta=document.createElement("div");meta.className="meta";
-  [item["調理時間(分)"]?item["調理時間(分)"]+"分":"",item["ジャンル"],item["ボリューム"]==="重い"?"がっつり":item["ボリューム"]].filter(Boolean).forEach(t=>{const tag=document.createElement("span");tag.className="tag";tag.textContent=t;meta.appendChild(tag);});
+  [item["調理時間(分)"]!=null?item["調理時間(分)"]+"分":"",({和:"和食",洋:"洋食",中:"中華",韓:"韓国",エスニック:"エスニック"})[item["ジャンル"]]||item["ジャンル"],item["ボリューム"]==="重い"?"がっつり":item["ボリューム"]==="軽い"?"軽め":item["ボリューム"]==="普通"?"普通":""].filter(Boolean).forEach(t=>{const tag=document.createElement("span");tag.className="tag";tag.textContent=t;meta.appendChild(tag);});
+  const reasonTitle=document.createElement("p");reasonTitle.className="reason-title";reasonTitle.textContent="おすすめの理由";
+  const reasonList=document.createElement("div");reasonList.className="reason-list";
+  const reasons=getReasons(item);
+  (reasons.length?reasons:["選んだ条件との相性を総合して選びました"]).forEach(reason=>{const tag=document.createElement("span");tag.className="reason-chip";tag.textContent=reason;reasonList.appendChild(tag);});
   const link=document.createElement("a");link.className="recipe";link.href="https://cookpad.com/jp/search/"+encodeURIComponent(item["メニュー名"]);link.target="_blank";link.rel="noopener noreferrer";link.textContent="レシピを探す ↗";
-  const save=document.createElement("button");save.type="button";save.className="save-btn";save.textContent=isSaved(item["メニュー名"])?"✓ お気に入り登録済み":"♡ お気に入りに追加";
-  if(isSaved(item["メニュー名"]))save.classList.add("saved");
-  save.addEventListener("click",()=>{const ok=saveMenu(item["メニュー名"],link.href);save.textContent=ok?"✓ お気に入り登録済み":"✓ お気に入り登録済み";save.classList.add("saved");});
-  card.append(rank,title,meta,link,save);grid.appendChild(card);
+  const save=document.createElement("button");save.type="button";save.className="save-btn";
+  const updateSaveButton=()=>{const saved=isSaved(item["メニュー名"]);save.textContent=saved?"✓ お気に入り登録済み":"♡ お気に入りに追加";save.classList.toggle("saved",saved);};
+  updateSaveButton();
+  save.addEventListener("click",()=>{if(isSaved(item["メニュー名"]))return;if(saveMenu(item["メニュー名"],link.href))updateSaveButton();});
+  body.append(rank,title,meta,reasonTitle,reasonList,link,save);
+  card.append(photo,body);grid.appendChild(card);
  });
  root.appendChild(grid);
  const actions=document.createElement("div");actions.className="result-actions";
- const again=document.createElement("button");again.className="primary-btn";again.textContent="回答を変えてもう一度 ↻";again.onclick=resetAll;
- const retry=document.createElement("button");retry.className="secondary-btn";retry.textContent="条件を少し変える ←";retry.onclick=()=>{isFinished=false;$("question-card").style.display="block";index=visibleQuestionIndexes().slice(-1)[0]||0;delete answers[questions[index].key];renderQuestion();window.scrollTo({top:0,behavior:"smooth"});};
- actions.append(again,retry);root.appendChild(actions);
+ const another=document.createElement("button");another.className="primary-btn";another.textContent="別の候補を見る ↻";another.disabled=allRanked.length<=picked.length;another.onclick=showAnotherSet;
+ const again=document.createElement("button");again.className="secondary-btn";again.textContent="回答を変える";again.onclick=resetAll;
+ const edit=document.createElement("button");edit.className="secondary-btn";edit.textContent="条件を少し変える ←";edit.onclick=editLastAnswer;
+ actions.append(another,again,edit);root.appendChild(actions);
  $("bar-inner").style.width="100%";window.scrollTo({top:0,behavior:"smooth"});
 }
-function showError(message){$("question-card").style.display="block";$("question").textContent="読み込みに失敗しました";$("hint").textContent="少し時間をおいて再読み込みしてください。";$("options").replaceChildren();const e=document.createElement("div");e.className="error";e.textContent=message;$("options").appendChild(e);}
+function showAnotherSet(){
+ if(!allRanked.length)return;
+ let available=allRanked.filter(x=>!shownNames.has(x.item["メニュー名"]));
+ if(!available.length){
+  shownNames=new Set(lastResults.map(x=>x["メニュー名"]));
+  available=allRanked.filter(x=>!shownNames.has(x.item["メニュー名"]));
+ }
+ if(!available.length){
+  let note=$("result").querySelector(".result-note");
+  if(!note){note=document.createElement("p");note.className="result-note";$("result").insertBefore(note,$("result").querySelector(".result-grid"));}
+  note.textContent="この条件に合う料理は"+allRanked.length+"種類で、ほかの候補はありません。食材や調理時間を変えると新しい料理が見つかるよ。";
+  return;
+ }
+ const picked=chooseDiverse(available);
+ lastResults=picked.map(x=>x.item);picked.forEach(x=>shownNames.add(x.item["メニュー名"]));
+ renderResults(picked,"another");
+}
+function editLastAnswer(){
+ $("question-card").style.display="block";
+ const visible=visibleQuestionIndexes();
+ index=visible[visible.length-1]??0;
+ delete answers[currentQuestions[index]?.key];
+ $("result").replaceChildren();renderQuestion();window.scrollTo({top:0,behavior:"smooth"});
+}
+function showError(message){
+ $("mode-picker").style.display="none";$("question-card").style.display="block";
+ $("question").textContent="読み込みに失敗しました";$("hint").textContent="少し時間をおいて再読み込みしてください。";
+ $("options").replaceChildren();const e=document.createElement("div");e.className="error";e.textContent=message;$("options").appendChild(e);
+}
 function isSaved(name){try{return JSON.parse(localStorage.getItem("savedMenus")||"[]").some(x=>x.name===name);}catch(e){return false;}}
 function saveMenu(name,link){
  try{const saved=JSON.parse(localStorage.getItem("savedMenus")||"[]");if(saved.some(x=>x.name===name))return false;saved.push({name,link});localStorage.setItem("savedMenus",JSON.stringify(saved));return true;}
  catch(e){alert("お気に入りを保存できませんでした。ブラウザの保存設定を確認してください。");return false;}
 }
-$("back-btn").addEventListener("click",goBack);$("reset-btn").addEventListener("click",resetAll);$("reset-top").addEventListener("click",resetAll);
-fetch("./menu.json").then(res=>{if(!res.ok)throw new Error("menu.json を取得できませんでした ("+res.status+")");return res.json();}).then(data=>{if(!Array.isArray(data))throw new Error("menu.json の形式が配列ではありません");db=data;renderQuestion();}).catch(err=>showError(err.message));
+$("back-btn").addEventListener("click",goBack);
+$("reset-btn").addEventListener("click",resetAll);
+$("reset-top").addEventListener("click",resetAll);
+$("mode-back-btn").addEventListener("click",returnToModes);
+$("quick-mode").addEventListener("click",()=>setMode("quick"));
+$("full-mode").addEventListener("click",()=>setMode("full"));
+$("multi-continue").addEventListener("click",confirmMulti);
+$("multi-clear").addEventListener("click",()=>{multiDraft.clear();answers["肉以外の材料"]=[];advanceQuestion();});
+fetch("./menu.json").then(res=>{if(!res.ok)throw new Error("menu.json を取得できませんでした ("+res.status+")");return res.json();}).then(data=>{
+ if(!Array.isArray(data)||!data.length)throw new Error("menu.json の形式が配列ではないか、データが空です");
+ db=data.filter(item=>item&&item["メニュー名"]);
+ if(!db.length)throw new Error("有効な料理データがありません");
+ $("mode-picker").style.display="block";
+}).catch(err=>showError(err.message));
 </script>
 </body>
 </html>
