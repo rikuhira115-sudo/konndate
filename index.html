@@ -61,6 +61,17 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;ma
 .history-next-btn:disabled{background:#e5e9e0;color:#7c867a;box-shadow:none;cursor:not-allowed}
 @media(max-width:560px){.history-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.history-actions button{font-size:12px;min-height:48px;padding:10px 8px}.result-history-label{margin-bottom:14px}}
 
+
+/* Completion polish: clearer selection and touch-friendly result controls */
+button{touch-action:manipulation}
+.option-btn{line-height:1.55;min-width:0}
+.option-btn:after{flex:0 0 auto}
+.result-intro{padding-top:24px}
+.food-photo{isolation:isolate}
+.food-photo img{background:#f0eee6}
+.result-card:focus-within{outline:2px solid #a7bea4;outline-offset:2px}
+.primary-btn:focus-visible,.secondary-btn:focus-visible,.save-btn:focus-visible,.multi-actions button:focus-visible{outline:3px solid #d6a16e;outline-offset:3px}
+@media(max-width:560px){.result-actions{display:grid;grid-template-columns:1fr 1fr}.result-actions button{min-height:46px;padding:12px 14px}.result-actions .history-next-btn{grid-column:1/-1;grid-row:1}.result-actions .history-nav-btn{grid-column:1/-1}.result-intro{padding-top:18px}}
 </style>
 </head>
 <body>
@@ -351,7 +362,7 @@ function chooseDiverse(entries){
  }
  return picked;
 }
-function finish(){
+function finish(allowGenreExpansion=false){
  const valid=db.filter(item=>item&&item["メニュー名"]);
  if(!valid.length){showError("料理データが空か、読み込めませんでした。menu.json の内容を確認してください。");return;}
  const strictCandidates=valid.filter(item=>matchesHardCriteria(item));
@@ -359,7 +370,7 @@ function finish(){
  relaxedGenre=false;
  // ジャンルを含めて3品そろわない場合だけジャンル条件を広げる。
  // 主食・食材タイプ・肉の種類・調理時間・選んだ味の特徴は緩めない。
- if(answers["ジャンル"]&&candidates.length<3){
+ if(allowGenreExpansion&&answers["ジャンル"]&&candidates.length<3){
   const expanded=valid.filter(item=>matchesHardCriteria(item,{ignoreGenre:true})&&matchesTastePreference(item));
   if(expanded.length>candidates.length){
    candidates=expanded;
@@ -380,6 +391,9 @@ function finish(){
   }
   const back=document.createElement("button");back.className="secondary-btn";back.textContent="最後の条件を変える";
   back.onclick=()=>{const visible=visibleQuestionIndexes();index=visible[visible.length-1]??0;delete answers[currentQuestions[index]?.key];renderQuestion();};
+  if(answers["ジャンル"]){
+   const broaden=document.createElement("button");broaden.className="primary-btn";broaden.textContent="ジャンルを広げて探す";broaden.onclick=()=>finish(true);actions.appendChild(broaden);
+  }
   const restart=document.createElement("button");restart.className="secondary-btn";restart.textContent="最初から";restart.onclick=resetAll;
   actions.append(back,restart);$("options").appendChild(actions);$("bar-inner").style.width="100%";return;
  }
