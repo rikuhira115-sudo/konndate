@@ -154,7 +154,7 @@ function renderQuestion(){
  const multiActions=$("multi-actions");multiActions.style.display=q.multi?"flex":"none";
  if(q.multi){
   const selected=normalizeArray(answers[q.key]);
-  multiDraft=new Set(q.options.filter(opt=>opt.value.length&&opt.value.some(k=>selected.includes(k))).map(opt=>opt.label));
+  multiDraft=new Set(q.options.filter(opt=>!opt.value.length?selected.length===0:opt.value.some(k=>selected.includes(k))).map(opt=>opt.label));
  }else multiDraft=new Set();
  q.options.forEach(opt=>{
   const b=document.createElement("button");b.type="button";b.className="option-btn";b.textContent=opt.label;
@@ -162,7 +162,7 @@ function renderQuestion(){
   else b.classList.toggle("selected",Object.prototype.hasOwnProperty.call(answers,q.key)&&sameValue(answers[q.key],opt.value));
   b.addEventListener("click",()=>{
    if(q.multi){
-    if(!opt.value.length)multiDraft.clear();
+    if(!opt.value.length){multiDraft.clear();multiDraft.add(opt.label);}
     else {multiDraft.delete("✨ こだわらない");if(multiDraft.has(opt.label))multiDraft.delete(opt.label);else multiDraft.add(opt.label);}
     Array.from($("options").querySelectorAll(".option-btn")).forEach((button,i)=>button.classList.toggle("selected",multiDraft.has(q.options[i].label)));
    }else selectAnswer(opt.value);
@@ -207,7 +207,7 @@ function matchesHardCriteria(item,options={}){
  if(a["主食"]&&item["主食"]!==a["主食"])return false;
  if(a["ジャンル"]&&!options.ignoreGenre&&!genreMatches(item,a["ジャンル"]))return false;
  if(a["食材タイプ"]==="肉"&&!isMeat(item))return false;
- if(a["食材タイプ"]==="魚介"&&!isSeafood(item))return false;
+ if(a["食材タイプ"]==="魚介"&&(!isSeafood(item)||isMeat(item)))return false;
  if(a["食材タイプ"]==="野菜など"&&(isMeat(item)||isSeafood(item)))return false;
  if(Array.isArray(a["肉の種類"])&&a["肉の種類"].length&&!hasAny(mats,a["肉の種類"]))return false;
  if(a["調理時間(分)"]!==undefined&&Number(a["調理時間(分)"])!==999){
