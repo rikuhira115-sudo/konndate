@@ -247,6 +247,27 @@ function shuffleTied(entries){
 }
 function chooseDiverse(entries){
  const picked=[],names=new Set(),categories=new Set();
+ if(relaxedGenre){
+  // ジャンルを広げたときも、選んだジャンルの候補を先にすべて表示する。
+  const preferred=entries.filter(entry=>genreMatches(entry.item,answers["ジャンル"]));
+  for(const entry of preferred){
+   const name=entry.item["メニュー名"];if(names.has(name))continue;
+   picked.push(entry);names.add(name);categories.add(entry.item["料理カテゴリ"]||"主菜");
+   if(picked.length===3)return picked;
+  }
+  const alternatives=entries.filter(entry=>!genreMatches(entry.item,answers["ジャンル"]));
+  for(const entry of alternatives){
+   const name=entry.item["メニュー名"],category=entry.item["料理カテゴリ"]||"主菜";
+   if(names.has(name)||categories.has(category))continue;
+   picked.push(entry);names.add(name);categories.add(category);
+   if(picked.length===3)return picked;
+  }
+  for(const entry of alternatives){
+   if(picked.length===3)break;
+   const name=entry.item["メニュー名"];if(!names.has(name)){picked.push(entry);names.add(name);}
+  }
+  return picked;
+ }
  for(const entry of entries){
   const name=entry.item["メニュー名"];if(names.has(name))continue;
   const category=entry.item["料理カテゴリ"]||"主菜";
