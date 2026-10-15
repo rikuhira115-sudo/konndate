@@ -62,7 +62,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;ma
 </div>
 <script>
 const ingredientGroups = [
- {label:"🐟 魚介",name:"魚介",keywords:["魚介","魚","鮭","サバ","鯖","ブリ","ぶり","アジ","ホッケ","海老","エビ","イカ","タコ","ツナ","まぐろ","マグロ","明太子","たらこ","たら"]},
+ {label:"🐟 魚介",name:"魚介",keywords:["魚介","魚","青魚","白身魚","イカタコ","鮭","サバ","鯖","ブリ","ぶり","アジ","ホッケ","海老","エビ","イカ","タコ","ツナ","まぐろ","マグロ","明太子","たらこ","たら"]},
  {label:"🥬 野菜",name:"野菜",keywords:["野菜","玉ねぎ","にんじん","キャベツ","大根","ねぎ","ピーマン","なす","ほうれん草","トマト","きゅうり"]},
  {label:"🥚 卵",name:"卵",keywords:["卵","たまご"]},
  {label:"🫘 豆腐・納豆",name:"豆腐・納豆",keywords:["豆腐","納豆","大豆"]},
@@ -286,6 +286,7 @@ function finish(){
   actions.append(back,restart);$("options").appendChild(actions);$("bar-inner").style.width="100%";return;
  }
  allRanked=shuffleTied(candidates.map((item,order)=>({item,score:scoreItem(item),order})));
+ if(relaxedGenre)allRanked.sort((a,b)=>Number(genreMatches(b.item,answers["ジャンル"]))-Number(genreMatches(a.item,answers["ジャンル"]))||b.score-a.score);
  const picked=chooseDiverse(allRanked);
  lastResults=picked.map(x=>x.item);shownNames=new Set(lastResults.map(x=>x["メニュー名"]));isFinished=true;
  renderResults(picked);
@@ -334,7 +335,7 @@ function renderResults(picked){
  const intro=document.createElement("div");intro.className="result-intro";
  intro.innerHTML='<div class="result-kicker">TODAY’S MENU</div><h2>今日のおすすめ、'+picked.length+'品。</h2><p>まず主食・食材・調理時間の条件を守り、その中から好みや予算に合う料理を選びました。</p>';root.appendChild(intro);
  if(relaxedGenre){
-  const note=document.createElement("p");note.className="result-note";note.textContent="選んだジャンルでは条件に合う料理が見つからなかったため、主食・食材・調理時間を優先して、別ジャンルも含めて探しました。";root.appendChild(note);
+  const note=document.createElement("p");note.className="result-note";note.textContent="選んだジャンルだけでは3品そろわなかったため、主食・食材・調理時間の条件を守りつつ、別ジャンルの料理も含めました。";root.appendChild(note);
  }
  if(allRanked.length<=3){
   const note=document.createElement("p");note.className="result-note";note.textContent="条件に合う料理は全部で"+allRanked.length+"種類です。候補を増やすには、食材・ジャンル・調理時間を少し広げてみてね。";root.appendChild(note);
