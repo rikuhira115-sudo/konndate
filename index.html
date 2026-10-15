@@ -132,28 +132,38 @@ const questions = [
 const quickKeys = ["主食","調理時間(分)","味の特徴"];
 const photoSources = {
  gyudon:{url:"https://images.unsplash.com/photo-1682566509547-5961bc5ea394?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/a-plate-of-food-with-rice-and-meat-lbaUoloKooI"},
- katsudon:{url:"https://images.unsplash.com/photo-1765510295901-3aa756cc1471?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/katsudon-served-in-a-blue-and-white-bowl-QercEMbK7Ak"},
- chickenRice:{url:"https://images.unsplash.com/photo-1763627719029-d7122ae87e8f?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/fried-chicken-and-egg-over-rice-with-scallions-poZ2O8B5KBQ"},
- curry:{url:"https://images.unsplash.com/photo-1753501183108-bcbac649992d?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/japanese-curry-rice-served-with-a-side-salad-VHUFBT6-RVU"},
- katsuCurry:{url:"https://images.unsplash.com/photo-1784955725783-76d170a05619?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/japanese-katsu-curry-with-rice-on-a-dark-plate-4yTD16MMnFo"},
- hamburger:{url:"https://images.unsplash.com/photo-1757822788140-00b683496ddd?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/hamburger-steak-with-rice-and-side-dishes-nHw7TynYoUM"},
- omurice:{url:"https://images.unsplash.com/photo-1743148509702-2198b23ede1c?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/omelet-with-sides-and-soup-ready-to-eat-TdtoE7BE3z8"},
- ramen:{url:"https://images.unsplash.com/photo-1746431565519-4352675bd721?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/delicious-japanese-ramen-in-a-bowl-79GiwAUmAOY"},
- carbonara:{url:"https://images.unsplash.com/photo-1588013273468-315fd88ea34c?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/pasta-dish-on-white-ceramic-plate--5FECW242og"},
- pasta:{url:"https://images.unsplash.com/photo-1579504673016-d0a8ade60777?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/pasta-dish-on-white-ceramic-plate-Amxb2pkUXFE"},
- udon:{url:"https://images.unsplash.com/photo-1763905145546-60bacfea6c9f?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/udon-noodles-with-beef-and-tempura-toppings-eVG2SfK23qc"},
- soba:{url:"https://images.unsplash.com/photo-1758945185414-d9e08cb60baf?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/soba-noodles-with-seaweed-and-tempura-qoCyDHOTQCM"},
- gyoza:{url:"https://images.unsplash.com/photo-1768326119773-05cae29f4106?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/golden-pan-fried-dumplings-on-a-banana-leaf-with-garnish-1obbVYT6BYU"},
- tempura:{url:"https://images.unsplash.com/photo-1535924571710-4c6e27716b6d?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/tempura-set-paMbZ0iNka8"},
- salmon:{url:"https://images.unsplash.com/photo-1747097950921-6e273f14b47f?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/grilled-salmon-dish-beautifully-presented-on-a-plate-OypKlUakK6Q"},
- friedChicken:{url:"https://images.unsplash.com/photo-1591100622264-4a2605e175a3?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/fried-chicken-on-white-ceramic-plate-7V1PRah-NOc"},
- sandwich:{url:"https://images.unsplash.com/reserve/jCCsCae7RwCDOKTCA2Ji_reggeli%20-%20sonk%C3%A1s%20szendvics.JPG?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/sandwich-closeup-photo-eQqY_KQOqEE"},
- salad:{url:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1000&q=80"},
- soup:{url:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=80"},
- asian:{url:"https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=1000&q=80"},
- rice:{url:"https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1000&q=80"},
- meat:{url:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80"},
- general:{url:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80"}
+ katsudon:{url:"https://images.unsplash.com/photo-1679279726946-a158b8bcaa23?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/photos/a-bowl-filled-with-rice-and-meat-covered-in-sauce-hEeA50ZHo4o"},
+ chickenRice:{url:"https://images.unsplash.com/photo-1763627719029-d7122ae87e8f?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/chicken-rice-bowl"},
+ curry:{url:"https://images.unsplash.com/photo-1753501183108-bcbac649992d?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/japanese-curry-rice"},
+ katsuCurry:{url:"https://images.unsplash.com/photo-1784955725783-76d170a05619?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/katsu-curry"},
+ hamburger:{url:"https://images.unsplash.com/photo-1757822788140-00b683496ddd?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/japanese-hamburger-steak"},
+ omurice:{url:"https://images.unsplash.com/photo-1743148509702-2198b23ede1c?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/omurice"},
+ ramen:{url:"https://images.unsplash.com/photo-1746431565519-4352675bd721?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/japanese-ramen"},
+ noodles:{url:"https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/noodle-bowl"},
+ carbonara:{url:"https://images.unsplash.com/photo-1588013273468-315fd88ea34c?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/carbonara"},
+ creamyPasta:{url:"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/creamy-pasta"},
+ creamy:{url:"https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/creamy-food"},
+ pasta:{url:"https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/pasta"},
+ udon:{url:"https://images.unsplash.com/photo-1763905145546-60bacfea6c9f?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/udon"},
+ soba:{url:"https://images.unsplash.com/photo-1758945185414-d9e08cb60baf?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/soba-noodles"},
+ gyoza:{url:"https://images.unsplash.com/photo-1768326119773-05cae29f4106?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/gyoza"},
+ tempura:{url:"https://images.unsplash.com/photo-1535924571710-4c6e27716b6d?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/tempura"},
+ salmon:{url:"https://images.unsplash.com/photo-1747097950921-6e273f14b47f?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/grilled-salmon"},
+ fishFry:{url:"https://images.unsplash.com/photo-1535924571710-4c6e27716b6d?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/fried-fish"},
+ friedChicken:{url:"https://images.unsplash.com/photo-1591100622264-4a2605e175a3?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/japanese-karaage"},
+ sandwich:{url:"https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/sandwich"},
+ salad:{url:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/fresh-salad"},
+ soup:{url:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/japanese-soup"},
+ hotPot:{url:"https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/hot-pot"},
+ asian:{url:"https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/asian-food"},
+ rice:{url:"https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/japanese-rice-bowl"},
+ sushi:{url:"https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/sushi"},
+ egg:{url:"https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/egg-dish"},
+ pizza:{url:"https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/pizza"},
+ frenchToast:{url:"https://images.unsplash.com/photo-1484723091739-30a097e8f929?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/french-toast"},
+ grill:{url:"https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/grilled-meat"},
+ meat:{url:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/grilled-meat"},
+ general:{url:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80",page:"https://unsplash.com/s/photos/home-cooked-meal"}
 };
 let db=[],index=0,answers={},isFinished=false,lastResults=[],allRanked=[],shownNames=new Set(),currentMode=null,currentQuestions=[],multiDraft=new Set(),relaxedGenre=false,resultHistory=[],resultHistoryIndex=-1;
 const $=id=>document.getElementById(id);
@@ -381,33 +391,17 @@ function finish(){
  renderResults(picked);
 }
 function photoFor(item){
- const name=item["メニュー名"]||"",category=item["料理カテゴリ"]||"";
- // Exact matches for frequently recommended dishes.
- if(name==="カツ丼")return photoSources.katsudon;
- if(["牛丼","豚丼","焼肉丼","カルビ丼"].includes(name))return photoSources.gyudon;
- if(["唐揚げ丼","親子丼","鶏そぼろ丼","三色丼"].includes(name))return photoSources.chickenRice;
- if(name==="カツカレー")return photoSources.katsuCurry;
- if(/カレーライス|ビーフカレー|ポークカレー|チキンカレー|キーマカレー|ドライカレー/.test(name))return photoSources.curry;
- if(name==="オムライス")return photoSources.omurice;
- if(/ハンバーグ|ロコモコ丼/.test(name))return photoSources.hamburger;
- if(name==="カルボナーラ")return photoSources.carbonara;
- if(/パスタ|ナポリタン|ペペロンチーノ|ミートソース|ジェノベーゼ|きのこパスタ|ツナパスタ|納豆パスタ/.test(name))return photoSources.pasta;
- if(/ラーメン|担々麺/.test(name))return photoSources.ramen;
- if(/うどん/.test(name))return photoSources.udon;
- if(/そば/.test(name))return photoSources.soba;
- if(name==="餃子")return photoSources.gyoza;
- if(/天ぷら|天丼/.test(name))return photoSources.tempura;
- if(/鮭|さば|鯖|ぶり|ブリ|ほっけ|ホッケ|アジフライ|白身魚|ムニエル|魚のホイル焼き/.test(name))return photoSources.salmon;
- if(/唐揚げ|チキン南蛮|チキンカツ|ヤンニョムチキン|油淋鶏|フライ|とんかつ|コロッケ/.test(name))return photoSources.friedChicken;
- if(/サンド|ホットドッグ/.test(name))return photoSources.sandwich;
- if(/サラダ/.test(name)||name==="野菜炒め"||name==="豚肉の味噌炒め")return photoSources.salad;
- if(/スープ|汁|シチュー|おでん|ポトフ|ぶり大根/.test(name)||category==="煮物")return photoSources.soup;
- if(category==="中華"||["エビマヨ","プルコギ","チャプチェ","スンドゥブチゲ","チーズタッカルビ","キンパ"].includes(name))return photoSources.asian;
- if(category==="丼"||category==="ご飯もの")return photoSources.rice;
- if(category==="麺")return photoSources.udon;
+ const key=item["画像キー"];
+ if(key&&photoSources[key])return photoSources[key];
+ const category=item["料理カテゴリ"]||"",staple=item["主食"]||"";
+ if(staple==="麺")return photoSources.noodles;
+ if(staple==="パン")return photoSources.sandwich;
+ if(staple==="米")return photoSources.rice;
+ if(category==="中華")return photoSources.asian;
  if(category==="揚げ物")return photoSources.friedChicken;
- if(category==="パン・軽食")return photoSources.sandwich;
- if(/ハンバーグ|生姜焼き|ステーキ|肉じゃが|プルコギ|豚バラ大根|ポークソテー|チキンソテー/.test(name))return photoSources.meat;
+ if(category==="煮物"||category==="鍋")return photoSources.hotPot;
+ if(category==="麺")return photoSources.noodles;
+ if(category==="ご飯もの"||category==="丼")return photoSources.rice;
  return photoSources.general;
 }
 function imageEmoji(item){
